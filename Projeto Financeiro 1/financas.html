@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Financeiro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Controle Financeiro</h1>
+        <p>Registro de entradas e saídas</p>
+    </header>
+
+    <main>
+        <section class="formulario">
+            <h2>Adicionar Transação</h2>
+            <form id="transacaoForm">
+                <label for="tipo">Tipo:</label>
+                <select id="tipo" name="tipo">
+                    <option value="entrada">Entrada</option>
+                    <option value="saida">Saída</option>
+                </select>
+
+                <label for="valor">Valor:</label>
+                <input type="number" id="valor" name="valor" step="0.01" required>
+
+                <label for="banco">Banco:</label>
+                <select id="banco" name="banco">
+                    <option value="itau">Itaú</option>
+                    <option value="nubank">Nubank</option>
+                    <option value="santander">Santander</option>
+                    <option value="inter">Inter</option>
+                </select>
+
+                <label for="descricao">Descrição:</label>
+                <input type="text" id="descricao" name="descricao" required>
+
+                <button type="submit">Adicionar</button>
+            </form>
+        </section>
+
+        <section class="transacoes">
+            <h2>Transações Recentes</h2>
+            <div class="botoes">
+                <button id="btnExtrato">Gerar Extrato</button>
+                <button id="btnLimparExtrato">Limpar Extrato</button>
+            </div>
+            <table id="tabelaTransacoes">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                        <th>Banco</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div id="extratoResultado" class="extrato">
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Controle Financeiro</p>
+    </footer>
+
+    <script>
+        document.getElementById('transacaoForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const tipo = document.getElementById('tipo').value;
+            const valor = parseFloat(document.getElementById('valor').value).toFixed(2);
+            const banco = document.getElementById('banco').value;
+            const descricao = document.getElementById('descricao').value;
+            const tabela = document.getElementById('tabelaTransacoes').getElementsByTagName('tbody')[0];
+            const novaLinha = tabela.insertRow();
+            novaLinha.insertCell(0).textContent = tipo === 'entrada' ? 'Entrada' : 'Saída';
+            novaLinha.insertCell(1).textContent = `R$ ${valor}`;
+            novaLinha.insertCell(2).textContent = banco.charAt(0).toUpperCase() + banco.slice(1);
+            novaLinha.insertCell(3).textContent = descricao;
+            document.getElementById('transacaoForm').reset();
+        });
+        document.getElementById('btnExtrato').addEventListener('click', function() {
+            const tabela = document.getElementById('tabelaTransacoes').getElementsByTagName('tbody')[0];
+            const linhas = tabela.getElementsByTagName('tr');
+
+            let totalEntradas = 0;
+            let totalSaidas = 0;
+            for (let i = 0; i < linhas.length; i++) {
+                const tipo = linhas[i].cells[0].textContent;
+                const valor = parseFloat(linhas[i].cells[1].textContent.replace('R$ ', ''));
+
+                if (tipo === 'Entrada') {
+                    totalEntradas += valor;
+                } else if (tipo === 'Saída') {
+                    totalSaidas += valor;
+                }
+            }
+
+            const saldo = totalEntradas - totalSaidas;
+            const corSaldo = saldo >= 0 ? 'verde' : 'vermelho';
+            const extratoResultado = document.getElementById('extratoResultado');
+            extratoResultado.innerHTML = `
+                <h3>Extrato</h3>
+                <p><strong>Total de Entradas:</strong> R$ ${totalEntradas.toFixed(2)}</p>
+                <p><strong>Total de Saídas:</strong> R$ ${totalSaidas.toFixed(2)}</p>
+                <p><strong>Saldo:</strong> <span class="${corSaldo}">R$ ${saldo.toFixed(2)}</span></p>
+            `;
+        });
+
+        document.getElementById('btnLimparExtrato').addEventListener('click', function() {
+            const extratoResultado = document.getElementById('extratoResultado');
+            extratoResultado.innerHTML = ''; 
+        });
+    </script>
+</body>
+</html>

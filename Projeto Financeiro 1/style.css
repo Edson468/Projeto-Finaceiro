@@ -1,0 +1,151 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    font-size: 2.5em;
+    color: #444;
+}
+
+header p {
+    font-size: 1.2em;
+    color: #666;
+}
+
+main {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.formulario {
+    margin-bottom: 30px;
+}
+
+.formulario h2 {
+    font-size: 1.8em;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.formulario label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.formulario input,
+.formulario select,
+.formulario button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.formulario button {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.formulario button:hover {
+    background-color: #218838;
+}
+
+.transacoes h2 {
+    font-size: 1.8em;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th,
+table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.verde {
+    color: #28a745;
+}
+
+.vermelho {
+    color: #dc3545;
+}
+
+.botoes {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#btnExtrato,
+#btnLimparExtrato {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#btnExtrato:hover,
+#btnLimparExtrato:hover {
+    background-color: #0056b3;
+}
+
+#btnLimparExtrato {
+    background-color: #dc3545;
+}
+
+#btnLimparExtrato:hover {
+    background-color: #c82333;
+}
+
+.verde {
+    color: #28a745; 
+}
+
+.vermelho {
+    color: #dc3545; 
+}
