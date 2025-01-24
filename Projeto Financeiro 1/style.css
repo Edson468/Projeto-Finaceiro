@@ -1,84 +1,169 @@
-/* Reset básico */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Estilos gerais */
 body {
     font-family: Arial, sans-serif;
-    line-height: 1.6;
+    margin: 0;
+    padding: 0;
     background-color: #f4f4f4;
-    color: #333;
-    padding: 20px;
 }
 
 header {
+    background-color: #007bff;
+    color: white;
+    padding: 20px;
     text-align: center;
     margin-bottom: 20px;
 }
 
 header h1 {
-    font-size: 2.5em;
-    color: #444;
+    margin: 0;
+    font-size: 24px;
 }
 
 header p {
-    font-size: 1.2em;
-    color: #666;
+    margin: 5px 0 0;
+    font-size: 14px;
 }
 
 main {
-    max-width: 800px;
-    margin: 0 auto;
-    background: #fff;
     padding: 20px;
+}
+
+section {
+    background-color: white;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
 }
 
-.formulario {
-    margin-bottom: 30px;
+h2 {
+    margin-top: 0;
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 15px;
 }
 
-.formulario h2 {
-    font-size: 1.8em;
-    margin-bottom: 10px;
-    color: #444;
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
 }
 
-.formulario label {
-    display: block;
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.form-group label {
     margin-bottom: 5px;
     font-weight: bold;
+    color: #555;
 }
 
-.formulario input,
-.formulario select,
-.formulario button {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
+.form-group input,
+.form-group select {
+    padding: 8px;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 1em;
+    font-size: 14px;
+    width: 100%; /* Garante que todos os inputs tenham o mesmo tamanho */
+    box-sizing: border-box; /* Inclui padding e borda no tamanho total */
 }
 
-.formulario button {
-    background-color: #28a745;
-    color: #fff;
+/* Estilo específico para a caixa de valor */
+.input-currency {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    width: 100%; /* Mesma largura das outras caixas */
+    box-sizing: border-box; /* Inclui padding e borda no tamanho total */
+}
+
+.input-currency .currency-symbol {
+    margin-right: 5px;
+    color: #555;
+}
+
+.input-currency input {
     border: none;
-    cursor: pointer;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    width: 100%; /* Ocupa todo o espaço disponível */
 }
 
-.formulario button:hover {
+.submit-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.submit-button:hover {
     background-color: #218838;
 }
 
-.transacoes h2 {
-    font-size: 1.8em;
-    margin-bottom: 10px;
-    color: #444;
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.button-success {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button-secondary {
+    background-color: #c91717;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.filter-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.filters-container {
+    display: none;
+    margin-top: 15px;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.table-container {
+    margin-top: 20px;
+    overflow-x: auto;
 }
 
 table {
@@ -86,66 +171,84 @@ table {
     border-collapse: collapse;
 }
 
-table th,
-table td {
+th, td {
     padding: 10px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
 
-table th {
-    background-color: #f8f9fa;
+th {
+    background-color: #f2f2f2;
     font-weight: bold;
+    color: #333;
+}
+
+/* Estilos para os marcadores de tipo */
+.status-entrada,
+.status-saida {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    display: inline-block;
+}
+
+.status-entrada {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-saida {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+/* Estilos para o extrato */
+.extrato-section {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.extrato-container h3 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.extrato-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.extrato-content p {
+    margin: 0;
+    font-size: 16px;
+    color: #555;
+}
+
+.extrato-total-positivo {
+    color: green;
+}
+
+.extrato-total-negativo {
+    color: red;
 }
 
 footer {
     text-align: center;
-    margin-top: 20px;
-    font-size: 0.9em;
-    color: #666;
-}
-
-.verde {
-    color: #28a745;
-}
-
-.vermelho {
-    color: #dc3545;
-}
-
-.botoes {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-#btnExtrato,
-#btnLimparExtrato {
+    padding: 10px;
     background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
+    color: white;
+    margin-top: 20px;
 }
 
-#btnExtrato:hover,
-#btnLimparExtrato:hover {
-    background-color: #0056b3;
-}
-
-#btnLimparExtrato {
-    background-color: #dc3545;
-}
-
-#btnLimparExtrato:hover {
-    background-color: #c82333;
-}
-
-.verde {
-    color: #28a745; 
-}
-
-.vermelho {
-    color: #dc3545; 
+footer p {
+    margin: 0;
+    font-size: 14px;
 }

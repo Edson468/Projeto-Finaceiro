@@ -8,113 +8,356 @@
 </head>
 <body>
     <header>
-        <h1>Controle Financeiro</h1>
-        <p>Registro de entradas e saídas</p>
+        <div class="header-content">
+            <h1>Controle Financeiro</h1>
+            <p>Registro de entradas e saídas</p>
+        </div>
     </header>
 
     <main>
-        <section class="formulario">
+        <section class="form-section">
             <h2>Adicionar Transação</h2>
             <form id="transacaoForm">
-                <label for="tipo">Tipo:</label>
-                <select id="tipo" name="tipo">
-                    <option value="entrada">Entrada</option>
-                    <option value="saida">Saída</option>
-                </select>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="descricao">Descrição:</label>
+                        <input type="text" id="descricao" name="descricao" required>
+                    </div>
 
-                <label for="valor">Valor:</label>
-                <input type="number" id="valor" name="valor" step="0.01" required>
+                    <div class="form-group">
+                        <label for="valor">Valor:</label>
+                        <div class="input-currency">
+                            <span class="currency-symbol">R$</span>
+                            <input type="number" id="valor" name="valor" step="0.01" required>
+                        </div>
+                    </div>
 
-                <label for="banco">Banco:</label>
-                <select id="banco" name="banco">
-                    <option value="itau">Itaú</option>
-                    <option value="nubank">Nubank</option>
-                    <option value="santander">Santander</option>
-                    <option value="inter">Inter</option>
-                </select>
+                    <div class="form-group">
+                        <label for="data">Data:</label>
+                        <input type="date" id="data" name="data" required>
+                    </div>
 
-                <label for="descricao">Descrição:</label>
-                <input type="text" id="descricao" name="descricao" required>
+                    <div class="form-group">
+                        <label for="banco">Banco:</label>
+                        <select id="banco" name="banco" required>
+                            <option value="Itaú">Itaú</option>
+                            <option value="Nubank">Nubank</option>
+                            <option value="Santander">Santander</option>
+                            <option value="Inter">Inter</option>
+                        </select>
+                    </div>
 
-                <button type="submit">Adicionar</button>
+                    <div class="form-group">
+                        <label for="categoria">Categoria:</label>
+                        <select id="categoria" name="categoria" required>
+                            <option value="C.Créd. Itaú">C.Créd. Itaú</option>
+                            <option value="Cartão de Crédito Nu">Cartão de Crédito Nu</option>
+                            <option value="Cartão de Créd. Inter">Cartão de Créd. Inter</option>
+                            <option value="Transferência">Transferência</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Casa">Casa</option>
+                            <option value="Fatura do Carro">Fatura do Carro</option>
+                            <option value="Lazer">Lazer</option>
+                            <option value="Alimentação">Alimentação</option>
+                            <option value="Compras">Compras</option>
+                            <option value="Assinatura">Assinatura</option>
+                            <option value="Fatura do cartão">Fatura do cartão</option>
+                            <option value="Doação">Doação</option>
+                            <option value="Educação">Educação</option>
+                            <option value="FASTFOOD">FASTFOOD</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipo">Tipo:</label>
+                        <select id="tipo" name="tipo" required>
+                            <option value="entrada">Entrada</option>
+                            <option value="saida">Saída</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button">Adicionar Transação</button>
             </form>
         </section>
 
-        <section class="transacoes">
-            <h2>Transações Recentes</h2>
-            <div class="botoes">
-                <button id="btnExtrato">Gerar Extrato</button>
-                <button id="btnLimparExtrato">Limpar Extrato</button>
+        <section class="transactions-section">
+            <div class="section-header">
+                <h2>Transações Recentes</h2>
+                <button id="btnFiltros" class="filter-button">Filtros</button>
             </div>
-            <table id="tabelaTransacoes">
-                <thead>
-                    <tr>
-                        <th>Tipo</th>
-                        <th>Valor</th>
-                        <th>Banco</th>
-                        <th>Descrição</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-            <div id="extratoResultado" class="extrato">
+
+            <!-- Filtros -->
+            <div id="filtros" class="filters-container">
+                <div class="filters-grid">
+                    <div class="form-group">
+                        <label for="filtroDataInicial">Data Inicial:</label>
+                        <input type="date" id="filtroDataInicial">
+                    </div>
+                    <div class="form-group">
+                        <label for="filtroDataFinal">Data Final:</label>
+                        <input type="date" id="filtroDataFinal">
+                    </div>
+                    <div class="form-group">
+                        <label for="filtroBanco">Banco:</label>
+                        <select id="filtroBanco">
+                            <option value="">Todos</option>
+                            <option value="Itaú">Itaú</option>
+                            <option value="Nubank">Nubank</option>
+                            <option value="Santander">Santander</option>
+                            <option value="Inter">Inter</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filtroCategoria">Categoria:</label>
+                        <select id="filtroCategoria">
+                            <option value="">Todas</option>
+                            <option value="C.Créd. Itaú">C.Créd. Itaú</option>
+                            <option value="Cartão de Crédito Nu">Cartão de Crédito Nu</option>
+                            <option value="Cartão de Créd. Inter">Cartão de Créd. Inter</option>
+                            <option value="Transferência">Transferência</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Casa">Casa</option>
+                            <option value="Fatura do Carro">Fatura do Carro</option>
+                            <option value="Lazer">Lazer</option>
+                            <option value="Alimentação">Alimentação</option>
+                            <option value="Compras">Compras</option>
+                            <option value="Assinatura">Assinatura</option>
+                            <option value="Fatura do cartão">Fatura do cartão</option>
+                            <option value="Doação">Doação</option>
+                            <option value="Educação">Educação</option>
+                            <option value="FASTFOOD">FASTFOOD</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filtroTipo">Tipo:</label>
+                        <select id="filtroTipo">
+                            <option value="">Todos</option>
+                            <option value="entrada">Entrada</option>
+                            <option value="saida">Saída</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filtroBusca">Buscar:</label>
+                        <input type="text" id="filtroBusca" placeholder="Buscar por descrição...">
+                    </div>
+                </div>
+
+                <!-- Botões de Filtro -->
+                <div class="button-group">
+                    <button id="btnGerarFiltro" class="button-success">Gerar Filtro</button>
+                    <button id="btnLimparFiltro" class="button-secondary">Limpar Filtro</button>
+                </div>
+            </div>
+
+            <!-- Tabela -->
+            <div class="table-container">
+                <table id="tabelaTransacoes">
+                    <thead>
+                        <tr>
+                            <th>Descrição</th>
+                            <th>Valor</th>
+                            <th>Data</th>
+                            <th>Banco</th>
+                            <th>Categoria</th>
+                            <th>Tipo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Nova seção para o extrato -->
+        <section class="extrato-section">
+            <div class="extrato-container">
+                <h3>Extrato</h3>
+                <div class="extrato-content">
+                    <p><strong>Total:</strong> <span id="extratoTotal">R$ 0,00</span></p>
+                    <p><strong>Entradas:</strong> <span id="extratoEntradas">R$ 0,00</span></p>
+                    <p><strong>Saídas:</strong> <span id="extratoSaidas">R$ 0,00</span></p>
+                </div>
             </div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2023 Controle Financeiro</p>
+        <p>&copy; <span id="currentYear"></span> Controle Financeiro</p>
     </footer>
 
     <script>
-        document.getElementById('transacaoForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+        // Inicialização
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        let transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
 
-            const tipo = document.getElementById('tipo').value;
-            const valor = parseFloat(document.getElementById('valor').value).toFixed(2);
-            const banco = document.getElementById('banco').value;
-            const descricao = document.getElementById('descricao').value;
-            const tabela = document.getElementById('tabelaTransacoes').getElementsByTagName('tbody')[0];
-            const novaLinha = tabela.insertRow();
-            novaLinha.insertCell(0).textContent = tipo === 'entrada' ? 'Entrada' : 'Saída';
-            novaLinha.insertCell(1).textContent = `R$ ${valor}`;
-            novaLinha.insertCell(2).textContent = banco.charAt(0).toUpperCase() + banco.slice(1);
-            novaLinha.insertCell(3).textContent = descricao;
-            document.getElementById('transacaoForm').reset();
-        });
-        document.getElementById('btnExtrato').addEventListener('click', function() {
-            const tabela = document.getElementById('tabelaTransacoes').getElementsByTagName('tbody')[0];
-            const linhas = tabela.getElementsByTagName('tr');
+        // Event Listeners
+        document.getElementById('transacaoForm').addEventListener('submit', handleSubmit);
+        document.getElementById('btnFiltros').addEventListener('click', toggleFiltros);
+        document.getElementById('btnGerarFiltro').addEventListener('click', aplicarFiltro);
+        document.getElementById('btnLimparFiltro').addEventListener('click', limparFiltro);
 
-            let totalEntradas = 0;
-            let totalSaidas = 0;
-            for (let i = 0; i < linhas.length; i++) {
-                const tipo = linhas[i].cells[0].textContent;
-                const valor = parseFloat(linhas[i].cells[1].textContent.replace('R$ ', ''));
+        // Funções
+        function handleSubmit(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            const transaction = {
+                id: Date.now().toString(),
+                description: formData.get('descricao'),
+                amount: parseFloat(formData.get('valor')),
+                date: formData.get('data'),
+                bank: formData.get('banco'),
+                category: formData.get('categoria'),
+                type: formData.get('tipo'),
+                created_at: new Date().toISOString()
+            };
 
-                if (tipo === 'Entrada') {
-                    totalEntradas += valor;
-                } else if (tipo === 'Saída') {
-                    totalSaidas += valor;
-                }
+            transactions.push(transaction);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            
+            e.target.reset();
+            atualizarTabela();
+        }
+
+        function toggleFiltros() {
+            const filtrosContainer = document.getElementById('filtros');
+            filtrosContainer.style.display = filtrosContainer.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
+        }
+
+        function formatarData(data) {
+            return new Date(data).toLocaleDateString('pt-BR');
+        }
+
+        function getMesAtual() {
+            const hoje = new Date();
+            const ano = hoje.getFullYear();
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            return `${ano}-${mes}`;
+        }
+
+        function filtrarTransacoes() {
+            let filtered = [...transactions];
+            const dataInicial = document.getElementById('filtroDataInicial').value;
+            const dataFinal = document.getElementById('filtroDataFinal').value;
+            const banco = document.getElementById('filtroBanco').value;
+            const categoria = document.getElementById('filtroCategoria').value;
+            const tipo = document.getElementById('filtroTipo').value;
+            const busca = document.getElementById('filtroBusca').value.toLowerCase();
+
+            // Filtro padrão: mês atual
+            if (!dataInicial && !dataFinal) {
+                const mesAtual = getMesAtual();
+                filtered = filtered.filter(t => t.date.startsWith(mesAtual));
             }
 
-            const saldo = totalEntradas - totalSaidas;
-            const corSaldo = saldo >= 0 ? 'verde' : 'vermelho';
-            const extratoResultado = document.getElementById('extratoResultado');
-            extratoResultado.innerHTML = `
-                <h3>Extrato</h3>
-                <p><strong>Total de Entradas:</strong> R$ ${totalEntradas.toFixed(2)}</p>
-                <p><strong>Total de Saídas:</strong> R$ ${totalSaidas.toFixed(2)}</p>
-                <p><strong>Saldo:</strong> <span class="${corSaldo}">R$ ${saldo.toFixed(2)}</span></p>
-            `;
-        });
+            if (dataInicial) {
+                filtered = filtered.filter(t => t.date >= dataInicial);
+            }
+            if (dataFinal) {
+                filtered = filtered.filter(t => t.date <= dataFinal);
+            }
+            if (banco) {
+                filtered = filtered.filter(t => t.bank === banco);
+            }
+            if (categoria) {
+                filtered = filtered.filter(t => t.category === categoria);
+            }
+            if (tipo) {
+                filtered = filtered.filter(t => t.type === tipo);
+            }
+            if (busca) {
+                filtered = filtered.filter(t => 
+                    t.description.toLowerCase().includes(busca) ||
+                    t.bank.toLowerCase().includes(busca) ||
+                    t.category.toLowerCase().includes(busca)
+                );
+            }
 
-        document.getElementById('btnLimparExtrato').addEventListener('click', function() {
-            const extratoResultado = document.getElementById('extratoResultado');
-            extratoResultado.innerHTML = ''; 
-        });
+            return filtered;
+        }
+
+        function atualizarTabela() {
+            const tbody = document.querySelector('#tabelaTransacoes tbody');
+            const transacoesFiltradas = filtrarTransacoes();
+            
+            tbody.innerHTML = '';
+            
+            transacoesFiltradas.sort((a, b) => new Date(b.date) - new Date(a.date))
+                .forEach(transaction => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${transaction.description}</td>
+                        <td>${formatarMoeda(transaction.amount)}</td>
+                        <td>${formatarData(transaction.date)}</td>
+                        <td>${transaction.bank}</td>
+                        <td>${transaction.category}</td>
+                        <td><span class="status-${transaction.type}">${
+                            transaction.type === 'entrada' ? 'Entrada' : 'Saída'
+                        }</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            // Atualiza o extrato ao filtrar a tabela
+            gerarExtrato();
+        }
+
+        function gerarExtrato() {
+            const transacoesFiltradas = filtrarTransacoes();
+            
+            const total = transacoesFiltradas.reduce((acc, curr) => {
+                return acc + (curr.type === 'entrada' ? curr.amount : -curr.amount);
+            }, 0);
+
+            const entradas = transacoesFiltradas
+                .filter(t => t.type === 'entrada')
+                .reduce((acc, curr) => acc + curr.amount, 0);
+
+            const saidas = transacoesFiltradas
+                .filter(t => t.type === 'saida')
+                .reduce((acc, curr) => acc + curr.amount, 0);
+
+            // Atualiza o extrato na tela
+            const extratoTotalElement = document.getElementById('extratoTotal');
+            extratoTotalElement.textContent = formatarMoeda(total);
+
+            // Aplica a classe correta com base no valor do saldo
+            if (total >= 0) {
+                extratoTotalElement.classList.remove('extrato-total-negativo');
+                extratoTotalElement.classList.add('extrato-total-positivo');
+            } else {
+                extratoTotalElement.classList.remove('extrato-total-positivo');
+                extratoTotalElement.classList.add('extrato-total-negativo');
+            }
+
+            document.getElementById('extratoEntradas').textContent = formatarMoeda(entradas);
+            document.getElementById('extratoSaidas').textContent = formatarMoeda(saidas);
+        }
+
+        function aplicarFiltro() {
+            atualizarTabela();
+        }
+
+        function limparFiltro() {
+            document.getElementById('filtroDataInicial').value = '';
+            document.getElementById('filtroDataFinal').value = '';
+            document.getElementById('filtroBanco').value = '';
+            document.getElementById('filtroCategoria').value = '';
+            document.getElementById('filtroTipo').value = '';
+            document.getElementById('filtroBusca').value = '';
+            atualizarTabela();
+        }
+
+        // Inicializar tabela
+        atualizarTabela();
     </script>
 </body>
 </html>
