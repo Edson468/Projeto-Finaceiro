@@ -73,19 +73,19 @@ h2 {
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
-    width: 100%; /* Garante que todos os inputs tenham o mesmo tamanho */
-    box-sizing: border-box; /* Inclui padding e borda no tamanho total */
+    width: 100%; 
+    box-sizing: border-box; 
 }
 
-/* Estilo específico para a caixa de valor */
+
 .input-currency {
     display: flex;
     align-items: center;
     border: 1px solid #ddd;
     border-radius: 4px;
     padding: 8px;
-    width: 100%; /* Mesma largura das outras caixas */
-    box-sizing: border-box; /* Inclui padding e borda no tamanho total */
+    width: 100%; 
+    box-sizing: border-box; 
 }
 
 .input-currency .currency-symbol {
@@ -98,7 +98,7 @@ h2 {
     outline: none;
     flex: 1;
     font-size: 14px;
-    width: 100%; /* Ocupa todo o espaço disponível */
+    width: 100%; 
 }
 
 .submit-button {
@@ -183,7 +183,7 @@ th {
     color: #333;
 }
 
-/* Estilos para os marcadores de tipo */
+
 .status-entrada,
 .status-saida {
     padding: 5px 10px;
@@ -204,7 +204,7 @@ th {
     color: #c62828;
 }
 
-/* Estilos para o extrato */
+
 .extrato-section {
     background-color: white;
     border-radius: 8px;
