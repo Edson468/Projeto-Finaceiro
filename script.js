@@ -169,3 +169,34 @@
 
  // Inicializar tabela
  atualizarTabela();
+
+
+   // Adiciona funcionalidade ao botão de sair
+const logoutButton = document.getElementById('logoutButton');
+if (logoutButton) {
+    logoutButton.addEventListener('click', function () {
+        // Redireciona para a tela de login
+        window.location.href = 'login.html';
+    });
+}
+
+ const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Simulação de autenticação
+            if (username === 'admin' && password === '1234') {
+                window.location.href = 'financas.html'; // Redireciona para a página principal
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        });
+
+        // Simulação de verificação de autenticação
+    if (!document.referrer.includes('login.html')) {
+        alert('Você precisa fazer login primeiro!');
+        window.location.href = 'login.html';
+    }
+
