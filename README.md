@@ -1,114 +1,167 @@
-Sistema de Gestão Financeira Pessoal - Documentação
+# Sistema de Gestão Financeira Pessoal - Documentação Atualizada
 
 📌 Visão Geral
 
-O Sistema de Gestão Financeira Pessoal é uma aplicação web que permite aos usuários controlar suas finanças de forma eficiente. Com ele, é possível registrar entradas (receitas) e saídas (despesas), classificá-las por categorias, vincular a contas bancárias específicas e visualizar um extrato completo com saldo atualizado. Além disso, o sistema oferece filtros avançados para análise personalizada.
+O Sistema de Gestão Financeira Pessoal é uma aplicação web completa que permite aos usuários controlar suas finanças de forma eficiente. Com um fluxo de autenticação seguro e funcionalidades robustas, os usuários podem registrar e gerenciar todas as suas transações financeiras.
 
-✨ Funcionalidades
+## 🔐 Fluxo de Autenticação
 
-📥 Registro de Transações
+### 🖥️ Tela de Login
+- Campos para inserção de **usuário** e **senha**
+- Validação de credenciais antes de acessar o sistema
+- Botão "Entrar" para acesso à aplicação
+- Botão "Cadastrar" para novos usuários
 
-✔ Adicionar entradas (receitas) e saídas (despesas)
+### 📝 Tela de Cadastro
+- Formulário simples para cadastro de novos usuários
+- Campos obrigatórios: usuário, senha e confirmação de senha
+- Validação de dados antes do cadastro
+- Feedback visual após cadastro bem-sucedido:
+  - Imagem de confirmação
+  - Mensagem de sucesso
+  - Redirecionamento automático para tela de login
 
-✔ Selecionar o banco/conta associado
+### 🔄 Fluxo Completo
+1. Novo usuário acessa a tela de cadastro
+2. Preenche os dados e realiza o cadastro
+3. Recebe confirmação visual do sucesso
+4. É redirecionado para a tela de login
+5. Insere as credenciais cadastradas
+6. Acessa o sistema de gestão financeira
 
-✔ Classificar por categoria (ex: Alimentação, Transporte, Salário)
+✨ Funcionalidades Principais
 
-✔ Incluir data e descrição
+## 💰 Gestão de Transações
+### 📥 Registro de Transações
+- Adicionar entradas (receitas) e saídas (despesas)
+- Selecionar o banco/conta associado
+- Classificar por categoria (ex: Alimentação, Transporte, Salário)
+- Incluir data e descrição detalhada
 
+### 📊 Extrato e Saldo
+- Lista completa de todas as transações
+- Cálculo automático do saldo (positivo ou negativo)
+- Visualização por período, categoria, banco ou tipo
+- Gráficos visuais para melhor compreensão dos dados
 
-📊 Extrato e Saldo
+### 🔍 Filtros Avançados
+- Filtrar por data (período específico ou personalizado)
+- Filtrar por categoria (ex: mostrar apenas gastos com "Lazer")
+- Filtrar por banco (apenas transações no "Banco X")
+- Filtrar por tipo (apenas entradas ou apenas saídas)
+- Combinação de múltiplos filtros simultaneamente
 
-✔ Lista completa de todas as transações
+### 🔄 Gerenciamento
+- Edição completa de transações existentes
+- Exclusão segura com confirmação
+- Visualização de saldo por banco/conta
+- Backup e recuperação de dados
 
-✔ Cálculo automático do saldo (positivo ou negativo)
+## 🛠️ Tecnologias Utilizadas
+- **Frontend**:
+  - HTML5 (Estrutura semântica)
+  - CSS3 (Design responsivo e moderno)
+  - JavaScript (Lógica de aplicação)
+  
+- **Armazenamento**:
+  - LocalStorage (Persistência de dados no navegador)
+  - Criptografia básica para dados sensíveis
 
-✔ Visualização por período, categoria, banco ou tipo (entrada/saída)
+- **Design**:
+  - UI/UX intuitiva e acessível
+  - Cores temáticas para melhor experiência
+  - Componentes reutilizáveis
 
-🔍 Filtros Avançados
+## 🚀 Como Usar
 
-✔ Filtrar por data (período específico)
+### 1. Primeiro Acesso
+- Acesse a tela de login
+- Clique em "Cadastrar" para criar nova conta
+- Preencha o formulário de cadastro
+- Confirme o cadastro e faça login
 
-✔ Filtrar por categoria (ex: mostrar apenas gastos com "Lazer")
+### 2. Adicionar Transação
+1. Selecione "Entrada" ou "Saída"
+2. Preencha valor, descrição, data, categoria e banco
+3. Clique em "Adicionar"
+4. Visualize a transação no extrato
 
-✔ Filtrar por banco (ex: apenas transações no "Banco X")
+### 3. Visualizar Extrato
+- Todas as transações aparecem na tabela de extrato
+- O saldo total é exibido no topo (verde para positivo, vermelho para negativo)
+- Use os controles de paginação para navegar entre muitos itens
 
-✔ Filtrar por tipo (apenas entradas ou apenas saídas)
+### 4. Usar Filtros
+1. Selecione um ou mais filtros (data, categoria, banco ou tipo)
+2. O extrato é atualizado automaticamente
+3. Clique em "Limpar Filtros" para voltar à visualização completa
 
-🔄 Gerenciamento
+### 5. Editar/Excluir
+- Clique no ícone de editar para modificar uma transação
+- Clique no ícone de excluir para remover (com confirmação)
+- Todas as alterações são salvas automaticamente
 
-✔ Editar ou excluir transações
-
-✔ Visualizar saldo por banco
-
-🛠️ Tecnologias Utilizadas
-
-HTML5 (Estrutura semântica)
-
-CSS3 (Design responsivo e moderno)
-
-JavaScript (Lógica de armazenamento, cálculos e filtros)
-
-LocalStorage (Persistência de dados no navegador)
-
-🚀 Como Usar
-
-1. Adicionar Transação
-2. 
-Selecione "Entrada" ou "Saída"
-
-Preencha valor, descrição, data, categoria e banco
-
-Clique em "Adicionar"
-
-2. Visualizar Extrato
-3. 
-Todas as transações aparecem na tabela de extrato
-
-O saldo total é exibido no topo (verde para positivo, vermelho para negativo)
-
-3. Usar Filtros
-4. 
-Selecione um filtro (data, categoria, banco ou tipo)
-
-O extrato é atualizado automaticamente
-
-4. Editar/Excluir
-5. 
-Clique no ícone de editar ou excluir ao lado de cada transação
-
-📂 Estrutura do Projeto
+## 📂 Estrutura do Projeto
+```
 gestao-financeira/  
-├── index.html          # Página principal  
-├── style.css           # Estilos (responsivo)  
-├── script.js           # Lógica (transações, filtros, LocalStorage)  
-└── README.md           # Documentação  
+├── index.html          # Página principal (login)  
+├── app.html            # Aplicação principal  
+├── cadastro.html       # Página de cadastro  
+├── assets/
+│   ├── css/            # Estilos 
+│   │   ├── style.css   # Estilos principais
+│   │   └── auth.css    # Estilos para autenticação
+│   ├── js/             # Scripts
+│   │   ├── script.js   # Lógica principal
+│   │   ├── auth.js     # Lógica de autenticação
+│   │   └── storage.js  # Gerenciamento de armazenamento
+│   └── img/            # Imagens e ícones
+├── README.md           # Documentação  
+└── LICENSE             # Licença do projeto
+```
 
-🎨 Design e Interface
+## 🎨 Design e Interface
+- **Layout moderno** e intuitivo
+- **Cores temáticas** consistentes:
+  - Verde para entradas/positivo
+  - Vermelho para saídas/negativo
+  - Azul para ações principais
+- **Componentes responsivos** que se adaptam a qualquer dispositivo
+- **Feedback visual** imediato para todas as ações:
+  - Animações suaves
+  - Mensagens de confirmação
+  - Indicadores de status
 
-✅ Layout limpo e intuitivo
+## 🔧 Personalização
+Você pode facilmente modificar:
+- Categorias padrão (em script.js)
+- Bancos/cartões disponíveis
+- Estilo das tabelas e botões (em style.css)
+- Mensagens do sistema
+- Cores temáticas (via variáveis CSS)
 
-✅ Cores temáticas (verde para entradas, vermelho para saídas)
+## 🔒 Segurança
+- Dados sensíveis armazenados com criptografia básica
+- Validação de formulários tanto no cliente quanto no servidor
+- Proteção contra XSS básica
+- Logout automático após período de inatividade
 
-✅ Tabela responsiva (adaptável a mobile)
+## 📄 Licença
+Este projeto é open-source e está disponível sob a licença MIT. Consulte o arquivo LICENSE para mais detalhes.
 
-✅ Feedback visual (confirmações de ações)
+## 💡 Créditos
+Desenvolvido por [Edson Carvalho](https://github.com/Edson468) como projeto prático de JavaScript.
 
-🔧 Personalização
+## 🔗 Links Úteis
+- [Acesse a aplicação]()
+- [Repositório no GitHub]()
+- [Documentação técnica]()
+- [Relatar problemas]()
 
-Você pode modificar:
-
-Categorias padrão (em script.js)
-
-Bancos/cartões disponíveis
-
-Estilo das tabelas e botões (em style.css)
-
-📄 Licença
-Este projeto é open-source e está disponível sob a licença MIT.
-
-💡 Créditos
-Desenvolvido por [Edson carvalho(https://github.com/Edson468)] como projeto prático de JavaScript.
-
-🔗 Acesse o projeto: [Link para GitHub Pages ou Deploy]
+## 🌟 Próximas Atualizações
+- Recuperação de senha
+- Sincronização com nuvem
+- Exportação de relatórios (PDF, Excel)
+- Dashboard analítico
+- Versão mobile nativa
 
