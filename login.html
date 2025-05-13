@@ -8,7 +8,13 @@
 </head>
 <body>
     <div class="login-container">
-        <h1>Login</h1>
+
+        <div class="logo">
+            <h1>Controle Financeiro</h1>
+            <p>Gerencie suas finanças de forma simples e eficiente.</p>
+        </div>
+
+        <h1>Bem-vindo ao <span>Login</span></h1>
         <form id="loginForm">
             <div class="form-group">
                 <label for="username">Usuário:</label>
@@ -22,6 +28,10 @@
         </form>
         <p id="loginError" class="error-message" style="display: none;">Usuário ou senha inválidos.</p>
         <button onclick="window.location.href='cadastro.html'" class="register-button">Cadastrar-se</button>
+    </div>
+
+    <div class="banner">
+        <img src="img/financas-2.jpg" alt="Finanças">
     </div>
 
     <script src="script_acesso.js"></script>

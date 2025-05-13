@@ -14,8 +14,13 @@ body {
 
 .login-container {
     max-width: 400px;
+    width: 100%;
     margin: 100px auto;
     padding: 20px;
+    position: absolute;
+    top: 50%;
+    left: 25%;
+    transform: translate(-50%, -50%);
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -25,6 +30,10 @@ body {
 
 .login-container h1 {
     margin-bottom: 20px;
+}
+
+.login-container h1 span {
+    color: #007BFF;
 }
 
 .login-container .form-group {
@@ -58,6 +67,51 @@ body {
 
 .login-container .submit-button:hover {
     background-color: #45a049;
+}
+
+.banner{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60%;
+    height: 10px;
+    height: 100%;
+    background: linear-gradient(to right, #0d9eca, #000080);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 60% 100%);
+    padding-right: 70px;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.logo h1 {
+    font-size: 40px;
+    margin-top: 50px;
+    line-height: 50px;
+    color: black;
+    position: absolute;
+    top: -6.8em;
+    left: 0;
+}
+
+.logo p {
+    margin-top: 10px;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: 1px;
+    color: black;
+    position: absolute;
+    top: -6em;
+}
+
+.banner img {
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    right: 0;
+    
 }
 
 .error-message {
