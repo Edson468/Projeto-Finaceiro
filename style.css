@@ -497,25 +497,3 @@ footer p {
     opacity: 0.9;
 }
 
-@media (max-width: 768px) {
-    main {
-        padding: 0 1rem;
-    }
-    
-    section {
-        padding: 1.5rem;
-    }
-    
-    .form-grid,
-    .filters-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .button-group {
-        flex-direction: column;
-    }
-    
-    .button-group button {
-        width: 100%;
-    }
-}
