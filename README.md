@@ -1,167 +1,171 @@
-# Sistema de Gestão Financeira Pessoal - Documentação Atualizada
+# 💰 Controle Financeiro - Aplicação Dinâmica
 
-📌 Visão Geral
+Uma aplicação web **full-stack** moderna e interativa para controle financeiro pessoal, desenvolvida com **HTML5, CSS3, JavaScript, Node.js e MySQL**.
 
-O Sistema de Gestão Financeira Pessoal é uma aplicação web completa que permite aos usuários controlar suas finanças de forma eficiente. Com um fluxo de autenticação seguro e funcionalidades robustas, os usuários podem registrar e gerenciar todas as suas transações financeiras.
+## ✨ **Funcionalidades Principais**
 
-## 🔐 Fluxo de Autenticação
+### 🎨 **Interface e UX**
+- **Tema Claro/Escuro**: Toggle automático com persistência no localStorage
+- **Variáveis CSS**: Sistema de cores dinâmico e consistente
+- **Transições Suaves**: Animações fluidas entre temas
 
-### 🖥️ Tela de Login
-- Campos para inserção de **usuário** e **senha**
-- Validação de credenciais antes de acessar o sistema
-- Botão "Entrar" para acesso à aplicação
-- Botão "Cadastrar" para novos usuários
+### 📊 **Dashboard Interativo**
+- **Cards de Resumo**: Saldo atual, receitas, despesas e metas
+- **Variações Percentuais**: Comparação com mês anterior
+- **Indicadores Visuais**: Cores dinâmicas baseadas no desempenho
+- **Animações de Entrada**: Efeitos visuais escalonados
 
-### 📝 Tela de Cadastro
-- Formulário simples para cadastro de novos usuários
-- Campos obrigatórios: usuário, senha e confirmação de senha
-- Validação de dados antes do cadastro
-- Feedback visual após cadastro bem-sucedido:
-  - Imagem de confirmação
-  - Mensagem de sucesso
-  - Redirecionamento automático para tela de login
+### 📈 **Gráficos Interativos**
+- **Fluxo de Caixa**: Gráfico de linha para análise temporal
+- **Distribuição por Categoria**: Gráfico de rosca para despesas
+- **Chart.js**: Biblioteca moderna para visualizações
+- **Responsivo**: Adapta-se a diferentes tamanhos de tela
 
-### 🔄 Fluxo Completo
-1. Novo usuário acessa a tela de cadastro
-2. Preenche os dados e realiza o cadastro
-3. Recebe confirmação visual do sucesso
-4. É redirecionado para a tela de login
-5. Insere as credenciais cadastradas
-6. Acessa o sistema de gestão financeira
+### 🎯 **Sistema de Metas Financeiras**
+- **Meta de Economia**: Acompanhamento em tempo real
+- **Barra de Progresso**: Visualização do progresso
+- **Percentual de Atingimento**: Cálculo automático
+- **Gestão de Metas**: Adicionar novas metas personalizadas
 
-✨ Funcionalidades Principais
+### 🔍 **Busca Inteligente**
+- **Sugestões em Tempo Real**: Busca por transações, categorias e bancos
+- **Filtros Automáticos**: Aplicação automática de filtros
+- **Histórico de Busca**: Sugestões baseadas em dados existentes
+- **Interface Intuitiva**: Dropdown com resultados relevantes
 
-## 💰 Gestão de Transações
-### 📥 Registro de Transações
-- Adicionar entradas (receitas) e saídas (despesas)
-- Selecionar o banco/conta associado
-- Classificar por categoria (ex: Alimentação, Transporte, Salário)
-- Incluir data e descrição detalhada
+### ⚡ **Filtros Avançados**
+- **Sistema de Abas**: Organização por período, categoria, banco e valor
+- **Filtros de Valor**: Mínimo e máximo para transações
+- **Persistência**: Lembra configurações de filtro
+- **Aplicação Inteligente**: Filtros em tempo real
 
-### 📊 Extrato e Saldo
-- Lista completa de todas as transações
-- Cálculo automático do saldo (positivo ou negativo)
-- Visualização por período, categoria, banco ou tipo
-- Gráficos visuais para melhor compreensão dos dados
+### 🔔 **Sistema de Notificações**
+- **Notificações Toast**: Mensagens não intrusivas
+- **Tipos de Alerta**: Sucesso, erro, aviso e informação
+- **Animações Suaves**: Entrada e saída com transições
+- **Auto-dismiss**: Desaparecem automaticamente após 3 segundos
 
-### 🔍 Filtros Avançados
-- Filtrar por data (período específico ou personalizado)
-- Filtrar por categoria (ex: mostrar apenas gastos com "Lazer")
-- Filtrar por banco (apenas transações no "Banco X")
-- Filtrar por tipo (apenas entradas ou apenas saídas)
-- Combinação de múltiplos filtros simultaneamente
+### 📤 **Exportação de Dados**
+- **Exportação CSV**: Download de transações filtradas
+- **Formatação Brasileira**: Valores em Real (R$)
+- **Nomeação Inteligente**: Arquivos com data automática
 
-### 🔄 Gerenciamento
-- Edição completa de transações existentes
-- Exclusão segura com confirmação
-- Visualização de saldo por banco/conta
-- Backup e recuperação de dados
+### 🔐 **Backend e Segurança**
+- **API RESTful com Node.js e Express**: Servidor robusto para gerenciar os dados.
+- **Banco de Dados MySQL**: Persistência de dados segura e escalável.
+- **Autenticação com JWT**: Login seguro com JSON Web Tokens.
+- **Criptografia de Senhas**: Senhas armazenadas com hash usando `bcryptjs`.
+- **Validação de Formulários**: Verificação completa no front-end e preparada para o back-end.
 
-## 🛠️ Tecnologias Utilizadas
-- **Frontend**:
-  - HTML5 (Estrutura semântica)
-  - CSS3 (Design responsivo e moderno)
-  - JavaScript (Lógica de aplicação)
-  
-- **Armazenamento**:
-  - LocalStorage (Persistência de dados no navegador)
-  - Criptografia básica para dados sensíveis
+## 🚀 **Como Usar**
 
-- **Design**:
-  - UI/UX intuitiva e acessível
-  - Cores temáticas para melhor experiência
-  - Componentes reutilizáveis
+### **Pré-requisitos**
+- **Node.js**: Baixe e instale
+- **MySQL**: Um servidor MySQL rodando (você pode usar XAMPP, WAMP, Docker, etc.)
 
-## 🚀 Como Usar
+### **Configuração do Ambiente**
 
-### 1. Primeiro Acesso
-- Acesse a tela de login
-- Clique em "Cadastrar" para criar nova conta
-- Preencha o formulário de cadastro
-- Confirme o cadastro e faça login
+1.  **Clone o repositório:**
+    ```bash
+    git clone <URL_DO_SEU_REPOSITORIO>
+    cd <NOME_DA_PASTA>
+    ```
 
-### 2. Adicionar Transação
-1. Selecione "Entrada" ou "Saída"
-2. Preencha valor, descrição, data, categoria e banco
-3. Clique em "Adicionar"
-4. Visualize a transação no extrato
+2.  **Instale as dependências do backend:**
+    ```bash
+    npm install
+    ```
 
-### 3. Visualizar Extrato
-- Todas as transações aparecem na tabela de extrato
-- O saldo total é exibido no topo (verde para positivo, vermelho para negativo)
-- Use os controles de paginação para navegar entre muitos itens
+3.  **Configure o banco de dados:**
+    - Crie um banco de dados no seu MySQL com o nome `financeiro_db`.
+    - Execute o script do arquivo `database.sql` para criar as tabelas.
 
-### 4. Usar Filtros
-1. Selecione um ou mais filtros (data, categoria, banco ou tipo)
-2. O extrato é atualizado automaticamente
-3. Clique em "Limpar Filtros" para voltar à visualização completa
+4.  **Configure as variáveis de ambiente:**
+    - Renomeie o arquivo `.env.example` (se houver) para `.env`.
+    - Abra o arquivo `.env` e preencha com as credenciais do seu banco de dados MySQL.
 
-### 5. Editar/Excluir
-- Clique no ícone de editar para modificar uma transação
-- Clique no ícone de excluir para remover (com confirmação)
-- Todas as alterações são salvas automaticamente
+5.  **Inicie o servidor backend:**
+    ```bash
+    npm run dev
+    ```
+    O servidor estará rodando em `http://localhost:3000`.
 
-## 📂 Estrutura do Projeto
+6.  **Abra a aplicação no navegador:**
+    - Abra o arquivo `index.html` diretamente no seu navegador.
+
+## 🛠️ **Tecnologias Utilizadas**
+
+- **HTML5**: Estrutura semântica e moderna
+- **CSS3**: Variáveis CSS, Grid, Flexbox, Animações
+- **JavaScript ES6+**: Módulos, Arrow Functions, Template Literals
+- **Node.js**: Ambiente de execução do backend
+- **Express.js**: Framework para a API
+- **MySQL**: Banco de dados relacional
+- **JWT (JSON Web Token)**: Para autenticação segura
+- **bcryptjs**: Para criptografia de senhas
+- **Chart.js**: Biblioteca para gráficos interativos
+
+## 📁 **Estrutura do Projeto**
+
 ```
-gestao-financeira/  
-├── index.html          # Página principal (login)  
-├── app.html            # Aplicação principal  
-├── cadastro.html       # Página de cadastro  
-├── assets/
-│   ├── css/            # Estilos 
-│   │   ├── style.css   # Estilos principais
-│   │   └── auth.css    # Estilos para autenticação
-│   ├── js/             # Scripts
-│   │   ├── script.js   # Lógica principal
-│   │   ├── auth.js     # Lógica de autenticação
-│   │   └── storage.js  # Gerenciamento de armazenamento
-│   └── img/            # Imagens e ícones
-├── README.md           # Documentação  
-└── LICENSE             # Licença do projeto
+Projeto-Finaceiro/
+├── financas.html          # Página principal da aplicação
+├── login.html             # Tela de autenticação
+├── cadastro.html          # Página de cadastro (opcional)
+├── style.css              # Estilos e animações
+├── script.js              # Lógica principal da aplicação
+├── script_acesso.js       # Autenticação e login
+├── script-retorno.js      # Scripts auxiliares
+├── img/                   # Imagens e ícones
+│   ├── financas-2.jpg     # Imagem de fundo
+│   └── success.png        # Ícone de sucesso
+└── README.md              # Documentação
 ```
 
-## 🎨 Design e Interface
-- **Layout moderno** e intuitivo
-- **Cores temáticas** consistentes:
-  - Verde para entradas/positivo
-  - Vermelho para saídas/negativo
-  - Azul para ações principais
-- **Componentes responsivos** que se adaptam a qualquer dispositivo
-- **Feedback visual** imediato para todas as ações:
-  - Animações suaves
-  - Mensagens de confirmação
-  - Indicadores de status
+## 🎯 **Recursos Futuros**
 
-## 🔧 Personalização
-Você pode facilmente modificar:
-- Categorias padrão (em script.js)
-- Bancos/cartões disponíveis
-- Estilo das tabelas e botões (em style.css)
-- Mensagens do sistema
-- Cores temáticas (via variáveis CSS)
+- [ ] **Sincronização em Nuvem**: Backup automático dos dados
+- [ ] **Múltiplas Contas**: Suporte a diferentes perfis
+- [ ] **Relatórios Avançados**: Análises mais detalhadas
+- [ ] **Notificações Push**: Alertas de metas e vencimentos
+- [ ] **Integração Bancária**: Importação automática de extratos
+- [ ] **Modo Offline**: Funcionamento sem internet
 
-## 🔒 Segurança
-- Dados sensíveis armazenados com criptografia básica
-- Validação de formulários tanto no cliente quanto no servidor
-- Proteção contra XSS básica
-- Logout automático após período de inatividade
+## 🔒 **Segurança**
 
-## 📄 Licença
-Este projeto é open-source e está disponível sob a licença MIT. Consulte o arquivo LICENSE para mais detalhes.
+- **Autenticação Local**: Sistema de login básico
+- **Validação de Dados**: Verificação de entrada do usuário
+- **Sanitização**: Prevenção contra XSS
+- **Persistência Segura**: Dados armazenados localmente
 
-## 💡 Créditos
-Desenvolvido por [Edson Carvalho](https://github.com/Edson468) como projeto prático de JavaScript.
+## 📱 **Compatibilidade**
 
-## 🔗 Links Úteis
-- [Acesse a aplicação]()
-- [Repositório no GitHub]()
-- [Documentação técnica]()
-- [Relatar problemas]()
+- **Navegadores Modernos**: Chrome, Firefox, Safari, Edge
+- **Dispositivos**: Desktop, Tablet, Mobile
+- **Resoluções**: 320px até 4K
+- **Touch**: Suporte completo para dispositivos touch
 
-## 🌟 Próximas Atualizações
-- Recuperação de senha
-- Sincronização com nuvem
-- Exportação de relatórios (PDF, Excel)
-- Dashboard analítico
-- Versão mobile nativa
+## 🤝 **Contribuição**
 
+Para contribuir com o projeto:
+
+1. Faça um fork do repositório
+2. Crie uma branch para sua feature
+3. Commit suas mudanças
+4. Push para a branch
+5. Abra um Pull Request
+
+## 📄 **Licença**
+
+Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
+
+## 📞 **Suporte**
+
+Para dúvidas ou sugestões:
+- Abra uma issue no repositório
+- Entre em contato via email
+- Consulte a documentação
+
+---
+
+**Desenvolvido com ❤️ para facilitar o controle financeiro pessoal**

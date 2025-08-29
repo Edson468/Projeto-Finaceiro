@@ -5,46 +5,205 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Controle Financeiro</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="register-container">
-        <h1>Cadastro</h1>
-        <form id="cadastroForm">
-            <div class="form-group">
-                <label for="nomeCompleto">Nome Completo:</label>
-                <input type="text" id="nomeCompleto" name="nomeCompleto" required>
-            </div>
-            <div class="form-group">
-                <label for="cpf">CPF:</label>
-                <input type="text" id="cpf" name="cpf" required>
-            </div>
-            <div class="form-group">
-                <label for="sexo">Sexo:</label>
-                <select id="sexo" name="sexo" required>
-                    <option value="masculino">Masculino</option>
-                    <option value="feminino">Feminino</option>
-                    <option value="outro">Outro</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="endereco">Endereço:</label>
-                <input type="text" id="endereco" name="endereco" required>
-            </div>
-            <div class="form-group">
-                <label for="username">Nome de Usuário:</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Senha:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" class="submit-button">Cadastrar</button>
-        </form>
-        <div id="successMessage" class="success-message" style="display: none;">
-            <img src="img/success.png" alt="Cadastro realizado com sucesso" class="success-image">
-            <p>Cadastro realizado com sucesso!</p>
+    <!-- Toggle de Tema -->
+    <button class="theme-toggle" id="themeToggle" title="Alternar Tema">
+        🌙
+    </button>
+
+    <!-- Header -->
+    <header class="cadastro-header">
+        <div class="header-content">
+            <h1 class="modern-gradient">Criar Nova Conta</h1>
+            <p>Junte-se ao Controle Financeiro e comece a gerenciar suas finanças hoje mesmo!</p>
         </div>
-    </div>
+    </header>
+
+    <main class="cadastro-main">
+        <div class="cadastro-container">
+            <!-- Formulário de Cadastro -->
+            <div class="cadastro-form-section" id="formSection">
+                <h2>Informações Pessoais</h2>
+                <form id="cadastroForm" class="cadastro-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nomeCompleto">
+                                <span class="required">*</span> Nome Completo
+                            </label>
+                            <input type="text" id="nomeCompleto" name="nomeCompleto" required 
+                                   placeholder="Digite seu nome completo">
+                            <div class="validation-message" id="nomeError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cpf">
+                                <span class="required">*</span> CPF
+                            </label>
+                            <input type="text" id="cpf" name="cpf" required 
+                                   placeholder="000.000.000-00" maxlength="14">
+                            <div class="validation-message" id="cpfError"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dataNascimento">
+                                <span class="required">*</span> Data de Nascimento
+                            </label>
+                            <input type="date" id="dataNascimento" name="dataNascimento" required>
+                            <div class="validation-message" id="dataError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sexo">
+                                <span class="required">*</span> Gênero
+                            </label>
+                            <select id="sexo" name="sexo" required>
+                                <option value="">Selecione...</option>
+                                <option value="masculino">Masculino</option>
+                                <option value="feminino">Feminino</option>
+                                <option value="outro">Outro</option>
+                                <option value="prefiro-nao-dizer">Prefiro não dizer</option>
+                            </select>
+                            <div class="validation-message" id="sexoError"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="email">
+                            <span class="required">*</span> E-mail
+                        </label>
+                        <input type="email" id="email" name="email" required 
+                               placeholder="seu@email.com">
+                        <div class="validation-message" id="emailError"></div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="endereco">
+                            <span class="required">*</span> Endereço Completo
+                        </label>
+                        <input type="text" id="endereco" name="endereco" required 
+                               placeholder="Rua, número, bairro, cidade - UF">
+                        <div class="validation-message" id="enderecoError"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="username">
+                                <span class="required">*</span> Nome de Usuário
+                            </label>
+                            <input type="text" id="username" name="username" required 
+                                   placeholder="Escolha um nome de usuário único">
+                            <div class="validation-message" id="usernameError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="telefone">
+                                <span class="required">*</span> Telefone
+                            </label>
+                            <input type="tel" id="telefone" name="telefone" required 
+                                   placeholder="(00) 00000-0000">
+                            <div class="validation-message" id="telefoneError"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password">
+                                <span class="required">*</span> Senha
+                            </label>
+                            <div class="password-input">
+                                <input type="password" id="password" name="password" required 
+                                       placeholder="Mínimo 8 caracteres">
+                                <button type="button" class="toggle-password" id="togglePassword">👁️</button>
+                            </div>
+                            <div class="password-strength" id="passwordStrength">
+                                <div class="strength-bar">
+                                    <div class="strength-fill" id="strengthFill"></div>
+                                </div>
+                                <span class="strength-text" id="strengthText">Força da senha</span>
+                            </div>
+                            <div class="validation-message" id="passwordError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword">
+                                <span class="required">*</span> Confirmar Senha
+                            </label>
+                            <div class="password-input">
+                                <input type="password" id="confirmPassword" name="confirmPassword" required 
+                                       placeholder="Digite a senha novamente">
+                                <button type="button" class="toggle-password" id="toggleConfirmPassword">👁️</button>
+                            </div>
+                            <div class="validation-message" id="confirmPasswordError"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="aceiteTermos" name="aceiteTermos" required>
+                            <span class="checkmark"></span>
+                            Li e aceito os <a href="#" class="terms-link">Termos de Uso</a> e 
+                            <a href="#" class="terms-link">Política de Privacidade</a>
+                        </label>
+                        <div class="validation-message" id="termosError"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="submit-button" id="submitBtn">
+                            <span class="btn-text">🚀 Criar Conta</span>
+                            <span class="btn-loading" id="btnLoading" style="display: none;">
+                                <div class="loading-spinner"></div>
+                                Criando conta...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="register-link">
+                    <p>Já tem uma conta? <a href="login.html">Faça login aqui</a></p>
+                </div>
+                <div class="register-link" style="margin-top: 1rem;">
+                    <a href="index.html">← Voltar ao Início</a>
+                </div>
+            </div>
+
+            <!-- Mensagem de Sucesso -->
+            <div class="success-section" id="successSection" style="display: none;">
+                <div class="success-content">
+                    <div class="success-icon">🎉</div>
+                    <h2>Conta Criada com Sucesso!</h2>
+                    <p>Sua conta foi criada e está pronta para uso. Agora você pode acessar o sistema e começar a gerenciar suas finanças!</p>
+                    
+                    <div class="success-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">📊</span>
+                            <span>Dashboard completo</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎯</span>
+                            <span>Metas financeiras</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">📈</span>
+                            <span>Gráficos interativos</span>
+                        </div>
+                    </div>
+
+                    <div class="success-actions">
+                        <a href="login.html" class="btn-primary">🔐 Fazer Login</a>
+                        <a href="index.html" class="btn-secondary">🏠 Voltar ao Início</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="cadastro-footer">
+        <p>&copy; <span id="currentYear"></span> Controle Financeiro. Todos os direitos reservados.</p>
+    </footer>
 
     <script src="script-retorno.js"></script>
 </body>

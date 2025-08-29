@@ -1,69 +1,510 @@
- // Inicialização
- document.getElementById('currentYear').textContent = new Date().getFullYear();
- let transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+// ===== CONFIGURAÇÃO INICIAL =====
+const API_URL = 'http://localhost:3000/api';
 
- // Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    initializeApp();
+});
+
+let transactions = [];
+let goals = [];
+let currentTheme = localStorage.getItem('theme') || 'light';
+
+// ===== INICIALIZAÇÃO DA APLICAÇÃO =====
+async function initializeApp() {
+    const token = checkAuth(); // Garante que o usuário está autenticado e retorna o token
+    if (!token) return;
+
+    // Carregar dados do backend
+    await loadInitialData(token);
+
+    setTheme(currentTheme);
+    setupEventListeners();
+    setupCharts();
+    renderGoals();
+    atualizarDashboard();
+    atualizarTabela();
+    setupSmartSearch();
+    setupFilterTabs();
+
+    document.getElementById('data').value = new Date().toISOString().split('T')[0];
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+}
+
+// ===== VERIFICAÇÃO DE AUTENTICAÇÃO =====
+function checkAuth() {
+    const isAuthenticated = localStorage.getItem('isAuthenticated');
+    // Se não estiver autenticado, redireciona para a página de login
+    if (isAuthenticated !== 'true') {
+        alert('Acesso negado. Por favor, faça o login.');
+        window.location.href = 'login.html';
+    }
+    return isAuthenticated;
+}
+
+// ===== CARREGAMENTO DE DADOS INICIAIS =====
+async function loadInitialData(token) {
+    try {
+        const response = await fetch(`${API_URL}/transactions`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error('Falha ao carregar dados.');
+        transactions = await response.json();
+    } catch (error) {
+        console.error('Erro ao carregar dados iniciais:', error);
+        showNotification('Não foi possível carregar suas transações.', 'error');
+    }
+}
+
+// ===== SISTEMA DE TEMAS =====
+function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    const themeToggle = document.getElementById('themeToggle');
+    
+    if (theme === 'dark') {
+        themeToggle.textContent = '☀️';
+        themeToggle.title = 'Mudar para Tema Claro';
+    } else {
+        themeToggle.textContent = '🌙';
+        themeToggle.title = 'Mudar para Tema Escuro';
+    }
+    
+    localStorage.setItem('theme', theme);
+    currentTheme = theme;
+}
+
+function toggleTheme() {
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+}
+
+// ===== CONFIGURAÇÃO DE EVENTOS =====
+function setupEventListeners() {
+    // Formulário de transação
  document.getElementById('transacaoForm').addEventListener('submit', handleSubmit);
+    
+    // Botões de filtro
  document.getElementById('btnFiltros').addEventListener('click', toggleFiltros);
  document.getElementById('btnGerarFiltro').addEventListener('click', aplicarFiltro);
  document.getElementById('btnLimparFiltro').addEventListener('click', limparFiltro);
 
- // Funções
- function handleSubmit(e) {
-     e.preventDefault();
-     const formData = new FormData(e.target);
-     
-     const transaction = {
-         id: Date.now().toString(),
-         description: formData.get('descricao'),
-         amount: parseFloat(formData.get('valor')),
-         date: formData.get('data'),
-         bank: formData.get('banco'),
-         category: formData.get('categoria'),
-         type: formData.get('tipo'),
-         created_at: new Date().toISOString()
-     };
+    // Botão de exportar
+    document.getElementById('btnExportar').addEventListener('click', exportarDados);
+    
+    // Toggle de tema
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    
+    // Botão de logout
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function() {
+            // Limpar dados de autenticação
+            localStorage.removeItem('loggedInUser');
+            localStorage.removeItem('authToken');
+            showNotification('Logout realizado com sucesso!', 'success');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1000);
+        });
+    }
 
-     transactions.push(transaction);
-     localStorage.setItem('transactions', JSON.stringify(transactions));
-     
-     e.target.reset();
-     atualizarTabela();
+    // --- OUVINTES DE EVENTOS PARA METAS ---
+    const btnShowAddGoal = document.getElementById('btnShowAddGoal');
+    const addGoalContainer = document.getElementById('addGoalContainer');
+    const cancelAddGoal = document.getElementById('cancelAddGoal');
+    const addGoalForm = document.getElementById('addGoalForm');
+
+    if (btnShowAddGoal) {
+        btnShowAddGoal.addEventListener('click', () => {
+            addGoalContainer.style.display = 'block';
+            btnShowAddGoal.style.display = 'none';
+        });
+    }
+
+    if (cancelAddGoal) {
+        cancelAddGoal.addEventListener('click', () => {
+            addGoalContainer.style.display = 'none';
+            btnShowAddGoal.style.display = 'block';
+            addGoalForm.reset();
+        });
+    }
+
+    if (addGoalForm) {
+        addGoalForm.addEventListener('submit', handleAddGoal);
+    }
+}
+
+// ===== DASHBOARD INTERATIVO =====
+function atualizarDashboard() {
+    const hoje = new Date();
+    const mesAtual = hoje.getMonth();
+    const anoAtual = hoje.getFullYear();
+    
+    // Dados do mês atual
+    const transacoesMesAtual = transactions.filter(t => {
+        const data = new Date(t.date);
+        return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
+    });
+    
+    // Dados do mês anterior
+    const transacoesMesAnterior = transactions.filter(t => {
+        const data = new Date(t.date);
+        const mesAnterior = mesAtual === 0 ? 11 : mesAtual - 1;
+        const anoAnterior = mesAtual === 0 ? anoAtual - 1 : anoAtual;
+        return data.getMonth() === mesAnterior && data.getFullYear() === anoAnterior;
+    });
+    
+    // Cálculos
+    const entradasMes = transacoesMesAtual.filter(t => t.type === 'entrada').reduce((acc, t) => acc + t.amount, 0);
+    const saidasMes = transacoesMesAtual.filter(t => t.type === 'saida').reduce((acc, t) => acc + t.amount, 0);
+    const saldoMes = entradasMes - saidasMes;
+    
+    const entradasMesAnterior = transacoesMesAnterior.filter(t => t.type === 'entrada').reduce((acc, t) => acc + t.amount, 0);
+    const saidasMesAnterior = transacoesMesAnterior.filter(t => t.type === 'saida').reduce((acc, t) => acc + t.amount, 0);
+    
+    // Variações percentuais
+    const variacaoEntradas = entradasMesAnterior > 0 ? ((entradasMes - entradasMesAnterior) / entradasMesAnterior * 100) : 0;
+    const variacaoSaidas = saidasMesAnterior > 0 ? ((saidasMes - saidasMesAnterior) / saidasMesAnterior * 100) : 0;
+    
+    // Atualizar cards do dashboard
+    document.getElementById('saldoAtual').textContent = formatarMoeda(saldoMes);
+    document.getElementById('receitasMes').textContent = formatarMoeda(entradasMes);
+    document.getElementById('despesasMes').textContent = formatarMoeda(saidasMes);
+    
+    // Atualizar variações
+    document.getElementById('saldoChange').textContent = `${saldoMes >= 0 ? '+' : ''}${saldoMes.toFixed(0)}% este mês`;
+    document.getElementById('receitasChange').textContent = `${variacaoEntradas >= 0 ? '+' : ''}${variacaoEntradas.toFixed(1)}% vs mês anterior`;
+    document.getElementById('despesasChange').textContent = `${variacaoSaidas >= 0 ? '+' : ''}${variacaoSaidas.toFixed(1)}% vs mês anterior`;
+    
+    // Aplicar classes de cor
+    document.getElementById('saldoChange').className = `change ${saldoMes >= 0 ? '' : 'negative'}`;
+    document.getElementById('receitasChange').className = `change ${variacaoEntradas >= 0 ? '' : 'negative'}`;
+    document.getElementById('despesasChange').className = `change ${variacaoSaidas >= 0 ? '' : 'negative'}`;
+    
+    // Atualizar meta de economia
+    atualizarMetaEconomia();
+}
+
+// ===== SISTEMA DE METAS =====
+function atualizarMetaEconomia() {
+    const meta = 1000; // Meta fixa de R$ 1.000,00
+    const hoje = new Date();
+    const mesAtual = hoje.getMonth();
+    const anoAtual = hoje.getFullYear();
+    
+    const transacoesMes = transactions.filter(t => {
+        const data = new Date(t.date);
+        return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
+    });
+    
+    const entradasMes = transacoesMes.filter(t => t.type === 'entrada').reduce((acc, t) => acc + t.amount, 0);
+    const saidasMes = transacoesMes.filter(t => t.type === 'saida').reduce((acc, t) => acc + t.amount, 0);
+    const economiaMes = entradasMes - saidasMes;
+    
+    const percentual = Math.min((economiaMes / meta) * 100, 100);
+    
+    document.getElementById('metaEconomia').textContent = formatarMoeda(economiaMes);
+    document.getElementById('metaProgresso').textContent = `${percentual.toFixed(1)}% atingido`;
+    
+    // Aplicar classe de cor
+    document.getElementById('metaProgresso').className = `change ${percentual >= 100 ? '' : 'negative'}`;
+}
+
+function handleAddGoal(e) {
+    e.preventDefault();
+    const goalNameInput = document.getElementById('goalName');
+    const goalValueInput = document.getElementById('goalValue');
+
+    const nome = goalNameInput.value.trim();
+    const valor = parseFloat(goalValueInput.value);
+
+    if (nome && !isNaN(valor) && valor > 0) {
+        const novaMeta = {
+            id: Date.now().toString(),
+            nome: nome,
+            valor: valor,
+            dataCriacao: new Date().toISOString(),
+            progresso: 0 // Progresso inicial é 0
+        };
+        
+        goals.push(novaMeta);
+        localStorage.setItem('goals', JSON.stringify(goals));
+        
+        showNotification('Meta criada com sucesso!', 'success');
+        
+        renderGoals(); // Re-renderiza a lista de metas
+
+        // Esconde o formulário e mostra o botão de adicionar
+        document.getElementById('addGoalContainer').style.display = 'none';
+        document.getElementById('btnShowAddGoal').style.display = 'block';
+        document.getElementById('addGoalForm').reset();
+
+    } else {
+        showNotification('Por favor, preencha o nome e um valor válido para a meta.', 'warning');
+    }
+}
+
+function renderGoals() {
+    const goalsList = document.getElementById('goalsList');
+    if (!goalsList) return;
+
+    goalsList.innerHTML = ''; // Limpa a lista
+
+    if (goals.length === 0) {
+        goalsList.innerHTML = '<p style="text-align: center; opacity: 0.7;">Nenhuma meta definida ainda. Adicione uma para começar!</p>';
+        return;
+    }
+
+    goals.forEach(goal => {
+        // A lógica de progresso ainda não está implementada, então será 0.
+        const progresso = goal.progresso || 0;
+        const percentual = Math.min((progresso / goal.valor) * 100, 100);
+
+        const goalElement = document.createElement('div');
+        goalElement.className = 'goal-item';
+        goalElement.innerHTML = `
+            <div class="goal-item-info">
+                <h4>${goal.nome}</h4>
+                <p>Meta: ${formatarMoeda(goal.valor)}</p>
+                <div class="goal-progress">
+                    <div class="goal-progress-bar" style="width: ${percentual.toFixed(1)}%;"></div>
+                </div>
+            </div>
+            <div class="goal-item-actions">
+                <span class="goal-percent">${percentual.toFixed(1)}%</span>
+                <button class="btn-icon" onclick="deleteGoal('${goal.id}')" title="Excluir Meta">🗑️</button>
+            </div>
+        `;
+        goalsList.appendChild(goalElement);
+    });
+}
+
+function deleteGoal(id) {
+    if (confirm('Tem certeza que deseja excluir esta meta?')) {
+        goals = goals.filter(g => g.id !== id);
+        localStorage.setItem('goals', JSON.stringify(goals));
+        renderGoals();
+        showNotification('Meta excluída com sucesso!', 'success');
+    }
+}
+// ===== GRÁFICOS =====
+function setupCharts() {
+    setupFluxoCaixaChart();
+    setupCategoriaChart();
+}
+
+function setupFluxoCaixaChart() {
+    const ctx = document.getElementById('fluxoCaixaChart').getContext('2d');
+    
+    // Dados dos últimos 6 meses
+    const meses = [];
+    const entradas = [];
+    const saidas = [];
+    
+    for (let i = 5; i >= 0; i--) {
+        const data = new Date();
+        data.setMonth(data.getMonth() - i);
+        const mes = data.toLocaleDateString('pt-BR', { month: 'short' });
+        meses.push(mes);
+        
+        const transacoesMes = transactions.filter(t => {
+            const tData = new Date(t.date);
+            return tData.getMonth() === data.getMonth() && tData.getFullYear() === data.getFullYear();
+        });
+        
+        const entradasMes = transacoesMes.filter(t => t.type === 'entrada').reduce((acc, t) => acc + t.amount, 0);
+        const saidasMes = transacoesMes.filter(t => t.type === 'saida').reduce((acc, t) => acc + t.amount, 0);
+        
+        entradas.push(entradasMes);
+        saidas.push(saidasMes);
+    }
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: meses,
+            datasets: [{
+                label: 'Entradas',
+                data: entradas,
+                borderColor: '#28a745',
+                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                tension: 0.4
+            }, {
+                label: 'Saídas',
+                data: saidas,
+                borderColor: '#dc3545',
+                backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'R$ ' + value.toLocaleString('pt-BR');
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function setupCategoriaChart() {
+    const ctx = document.getElementById('categoriaChart').getContext('2d');
+    
+    // Agrupar transações por categoria
+    const categorias = {};
+    transactions.forEach(t => {
+        if (t.type === 'saida') {
+            categorias[t.category] = (categorias[t.category] || 0) + t.amount;
+        }
+    });
+    
+    const labels = Object.keys(categorias);
+    const data = Object.values(categorias);
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                    '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            }
+        }
+    });
+}
+
+// ===== BUSCA INTELIGENTE =====
+function setupSmartSearch() {
+    const searchInput = document.getElementById('smartSearch');
+    const suggestions = document.getElementById('searchSuggestions');
+    
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        
+        if (query.length < 2) {
+            suggestions.style.display = 'none';
+            return;
+        }
+        
+        const results = [];
+        
+        // Buscar em transações
+        transactions.forEach(t => {
+            if (t.description.toLowerCase().includes(query) ||
+                t.category.toLowerCase().includes(query) ||
+                t.bank.toLowerCase().includes(query)) {
+                results.push({
+                    type: 'transacao',
+                    text: `${t.description} - ${t.category}`,
+                    data: t
+                });
+            }
+        });
+        
+        // Buscar em categorias únicas
+        const categoriasUnicas = [...new Set(transactions.map(t => t.category))];
+        categoriasUnicas.forEach(cat => {
+            if (cat.toLowerCase().includes(query)) {
+                results.push({
+                    type: 'categoria',
+                    text: cat,
+                    data: cat
+                });
+            }
+        });
+        
+        // Mostrar sugestões
+        if (results.length > 0) {
+            suggestions.innerHTML = results.slice(0, 5).map(r => 
+                `<div class="search-suggestion" onclick="selecionarSugestao('${r.type}', '${r.text}')">
+                    ${r.text}
+                </div>`
+            ).join('');
+            suggestions.style.display = 'block';
+        } else {
+            suggestions.style.display = 'none';
+        }
+    });
+    
+    // Esconder sugestões ao clicar fora
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !suggestions.contains(e.target)) {
+            suggestions.style.display = 'none';
+        }
+    });
+}
+
+function selecionarSugestao(tipo, texto) {
+    document.getElementById('smartSearch').value = texto;
+    document.getElementById('searchSuggestions').style.display = 'none';
+    
+    // Aplicar filtro automático
+    if (tipo === 'categoria') {
+        document.getElementById('filtroCategoria').value = texto;
+    }
+    
+    aplicarFiltro();
+}
+
+// ===== FILTROS AVANÇADOS =====
+function setupFilterTabs() {
+    const tabs = document.querySelectorAll('.filter-tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remover classe active de todas as tabs
+            tabs.forEach(t => t.classList.remove('active'));
+            // Adicionar classe active na tab clicada
+            this.classList.add('active');
+        });
+    });
  }
 
  function toggleFiltros() {
      const filtrosContainer = document.getElementById('filtros');
-     filtrosContainer.style.display = filtrosContainer.style.display === 'none' ? 'block' : 'none';
- }
-
- function formatarMoeda(valor) {
-     return new Intl.NumberFormat('pt-BR', {
-         style: 'currency',
-         currency: 'BRL'
-     }).format(valor);
- }
-
- function formatarData(data) {
-     return new Date(data).toLocaleDateString('pt-BR');
- }
-
- function getMesAtual() {
-     const hoje = new Date();
-     const ano = hoje.getFullYear();
-     const mes = String(hoje.getMonth() + 1).padStart(2, '0');
-     return `${ano}-${mes}`;
+    const isVisible = filtrosContainer.style.display !== 'none';
+    
+    if (isVisible) {
+        filtrosContainer.style.display = 'none';
+        document.getElementById('btnFiltros').textContent = 'Filtros';
+    } else {
+        filtrosContainer.style.display = 'block';
+        document.getElementById('btnFiltros').textContent = 'Ocultar Filtros';
+    }
  }
 
  function filtrarTransacoes() {
      let filtered = [...transactions];
+    
      const dataInicial = document.getElementById('filtroDataInicial').value;
      const dataFinal = document.getElementById('filtroDataFinal').value;
      const banco = document.getElementById('filtroBanco').value;
      const categoria = document.getElementById('filtroCategoria').value;
      const tipo = document.getElementById('filtroTipo').value;
-     const busca = document.getElementById('filtroBusca').value.toLowerCase();
+    const valorMin = parseFloat(document.getElementById('filtroValorMin').value) || 0;
+    const valorMax = parseFloat(document.getElementById('filtroValorMax').value) || Infinity;
 
-     // Filtro padrão: mês atual
+    // Filtro padrão: mês atual (se nenhum filtro de data estiver ativo)
      if (!dataInicial && !dataFinal) {
          const mesAtual = getMesAtual();
          filtered = filtered.filter(t => t.date.startsWith(mesAtual));
@@ -84,17 +525,77 @@
      if (tipo) {
          filtered = filtered.filter(t => t.type === tipo);
      }
-     if (busca) {
-         filtered = filtered.filter(t => 
-             t.description.toLowerCase().includes(busca) ||
-             t.bank.toLowerCase().includes(busca) ||
-             t.category.toLowerCase().includes(busca)
-         );
+    if (valorMin > 0) {
+        filtered = filtered.filter(t => t.amount >= valorMin);
+    }
+    if (valorMax < Infinity) {
+        filtered = filtered.filter(t => t.amount <= valorMax);
      }
 
      return filtered;
  }
 
+// ===== FORMULÁRIO DE TRANSAÇÃO =====
+async function handleSubmit(e) {
+    e.preventDefault();
+    
+    // Mostrar loading
+    const submitText = document.getElementById('submitText');
+    const submitLoading = document.getElementById('submitLoading');
+    submitText.parentElement.disabled = true;
+    submitLoading.style.display = 'inline-block';
+    
+    // Simular delay para melhor UX
+    setTimeout(() => {
+        const formData = new FormData(e.target);
+        
+        const transaction = {
+            id: Date.now().toString(),
+            description: formData.get('descricao'),
+            amount: parseFloat(formData.get('valor')),
+            date: formData.get('data'),
+            bank: formData.get('banco'),
+            category: formData.get('categoria'),
+            type: formData.get('tipo'),
+            created_at: new Date().toISOString()
+        };
+        
+        // Enviar para o backend
+        const token = localStorage.getItem('authToken');
+        fetch(`${API_URL}/transactions`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(transaction)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Falha ao salvar transação.');
+            return response.json();
+        })
+        .then(newTransactionData => {
+            transaction.id = newTransactionData.id; // Atualiza o ID com o do banco
+            transactions.push(transaction);
+            
+            e.target.reset();
+            document.getElementById('data').value = new Date().toISOString().split('T')[0];
+            
+            atualizarDashboard();
+            atualizarTabela();
+            setupCharts();
+            
+            showNotification('Transação adicionada com sucesso!', 'success');
+        })
+        .catch(error => showNotification(error.message, 'error'))
+        .finally(() => {
+            submitText.parentElement.disabled = false;
+            submitLoading.style.display = 'none';
+        });
+    }, 500);
+}
+
+// ===== TABELA DE TRANSAÇÕES =====
  function atualizarTabela() {
      const tbody = document.querySelector('#tabelaTransacoes tbody');
      const transacoesFiltradas = filtrarTransacoes();
@@ -102,8 +603,11 @@
      tbody.innerHTML = '';
      
      transacoesFiltradas.sort((a, b) => new Date(b.date) - new Date(a.date))
-         .forEach(transaction => {
+        .forEach((transaction, index) => {
              const tr = document.createElement('tr');
+            tr.className = 'table-row';
+            tr.style.animationDelay = `${index * 0.1}s`;
+            
              tr.innerHTML = `
                  <td>${transaction.description}</td>
                  <td>${formatarMoeda(transaction.amount)}</td>
@@ -113,14 +617,58 @@
                  <td><span class="status-${transaction.type}">${
                      transaction.type === 'entrada' ? 'Entrada' : 'Saída'
                  }</span></td>
+                <td>
+                    <button onclick="editarTransacao('${transaction.id}')" class="button-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">✏️</button>
+                    <button onclick="excluirTransacao('${transaction.id}')" class="button-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">🗑️</button>
+                </td>
              `;
              tbody.appendChild(tr);
          });
 
-     // Atualiza o extrato ao filtrar a tabela
+    // Atualizar extrato
      gerarExtrato();
  }
 
+function editarTransacao(id) {
+    const transaction = transactions.find(t => t.id === id);
+    if (transaction) {
+        // Preencher formulário com dados da transação
+        document.getElementById('descricao').value = transaction.description;
+        document.getElementById('valor').value = transaction.amount;
+        document.getElementById('data').value = transaction.date;
+        document.getElementById('banco').value = transaction.bank;
+        document.getElementById('categoria').value = transaction.category;
+        document.getElementById('tipo').value = transaction.type;
+        
+        // Remover transação antiga
+        transactions = transactions.filter(t => t.id !== id);
+        localStorage.setItem('transactions', JSON.stringify(transactions));
+        
+        // Atualizar interface
+        atualizarDashboard();
+        atualizarTabela();
+        
+        showNotification('Transação carregada para edição!', 'info');
+        
+        // Scroll para o formulário
+        document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+function excluirTransacao(id) {
+    if (confirm('Tem certeza que deseja excluir esta transação?')) {
+        transactions = transactions.filter(t => t.id !== id);
+        localStorage.setItem('transactions', JSON.stringify(transactions));
+        
+        atualizarDashboard();
+        atualizarTabela();
+        setupCharts();
+        
+        showNotification('Transação excluída com sucesso!', 'success');
+    }
+}
+
+// ===== EXTRATO =====
  function gerarExtrato() {
      const transacoesFiltradas = filtrarTransacoes();
      
@@ -136,25 +684,45 @@
          .filter(t => t.type === 'saida')
          .reduce((acc, curr) => acc + curr.amount, 0);
 
-     // Atualiza o extrato na tela
-     const extratoTotalElement = document.getElementById('extratoTotal');
-     extratoTotalElement.textContent = formatarMoeda(total);
+    // Atualizar extrato na tela
+    document.getElementById('extratoEntradas').textContent = formatarMoeda(entradas);
+    document.getElementById('extratoSaidas').textContent = formatarMoeda(saidas);
+    document.getElementById('extratoTotal').textContent = formatarMoeda(total);
 
-     // Aplica a classe correta com base no valor do saldo
-     if (total >= 0) {
-         extratoTotalElement.classList.remove('extrato-total-negativo');
-         extratoTotalElement.classList.add('extrato-total-positivo');
-     } else {
-         extratoTotalElement.classList.remove('extrato-total-positivo');
-         extratoTotalElement.classList.add('extrato-total-negativo');
+    // Aplicar a classe correta ao card de saldo
+    const extratoSaldoCard = document.getElementById('extratoSaldoCard');
+    if (extratoSaldoCard) {
+        extratoSaldoCard.classList.remove('positivo', 'negativo');
+        if (total >= 0) {
+            extratoSaldoCard.classList.add('positivo');
+        } else {
+            extratoSaldoCard.classList.add('negativo');
+        }
      }
-
-     document.getElementById('extratoEntradas').textContent = formatarMoeda(entradas);
-     document.getElementById('extratoSaidas').textContent = formatarMoeda(saidas);
  }
+
+// ===== FUNÇÕES AUXILIARES =====
+function formatarMoeda(valor) {
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    }).format(valor);
+}
+
+function formatarData(data) {
+    return new Date(data).toLocaleDateString('pt-BR');
+}
+
+function getMesAtual() {
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    return `${ano}-${mes}`;
+}
 
  function aplicarFiltro() {
      atualizarTabela();
+    showNotification('Filtros aplicados com sucesso!', 'success');
  }
 
  function limparFiltro() {
@@ -163,40 +731,69 @@
      document.getElementById('filtroBanco').value = '';
      document.getElementById('filtroCategoria').value = '';
      document.getElementById('filtroTipo').value = '';
-     document.getElementById('filtroBusca').value = '';
+    document.getElementById('filtroValorMin').value = '';
+    document.getElementById('filtroValorMax').value = '';
+    
      atualizarTabela();
- }
-
- // Inicializar tabela
- atualizarTabela();
-
-
-   // Adiciona funcionalidade ao botão de sair
-const logoutButton = document.getElementById('logoutButton');
-if (logoutButton) {
-    logoutButton.addEventListener('click', function () {
-        // Redireciona para a tela de login
-        window.location.href = 'login.html';
-    });
+    showNotification('Filtros limpos!', 'info');
 }
 
- const loginForm = document.getElementById('loginForm');
-        loginForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            // Simulação de autenticação
-            if (username === 'admin' && password === '1234') {
-                window.location.href = 'financas.html'; // Redireciona para a página principal
-            } else {
-                document.getElementById('loginError').style.display = 'block';
-            }
-        });
-
-        // Simulação de verificação de autenticação
-    if (!document.referrer.includes('login.html')) {
-        alert('Você precisa fazer login primeiro!');
-        window.location.href = 'login.html';
+// ===== SISTEMA DE NOTIFICAÇÕES =====
+function showNotification(message, type = 'success') {
+    // Remover notificação existente
+    const existingNotification = document.querySelector('.notification');
+    if (existingNotification) {
+        existingNotification.remove();
     }
+    
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Mostrar notificação
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    // Remover notificação após 3 segundos
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}
 
+// ===== EXPORTAÇÃO DE DADOS =====
+function exportarDados() {
+    const transacoesFiltradas = filtrarTransacoes();
+    
+    if (transacoesFiltradas.length === 0) {
+        showNotification('Nenhuma transação para exportar!', 'warning');
+        return;
+    }
+    
+    // Criar CSV
+    let csv = 'Descrição,Valor,Data,Banco,Categoria,Tipo\n';
+    
+    transacoesFiltradas.forEach(t => {
+        csv += `"${t.description}",${t.amount},${t.date},"${t.bank}","${t.category}","${t.type}"\n`;
+    });
+    
+    // Download do arquivo
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `transacoes_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showNotification('Dados exportados com sucesso!', 'success');
+}

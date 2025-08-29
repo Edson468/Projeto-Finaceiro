@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Financeiro - Gerencie suas Finanças</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header com Navegação -->
+    <header class="landing-header">
+        <nav class="nav-container">
+            <div class="nav-logo">
+                <h2 class="modern-gradient">Controle Financeiro</h2>
+            </div>
+            <div class="nav-right-section">
+                <div class="nav-links">
+                    <a href="#features">Funcionalidades</a>
+                    <a href="#contact">Contato</a>
+                    <a href="login.html" class="nav-login-btn">Entrar</a>
+                </div>
+                <button class="theme-toggle" id="themeToggle" title="Alternar Tema">🌙</button>
+            </div>
+        </nav>
+        
+        <div class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Gerencie suas <span class="modern-gradient">Finanças</span> de forma inteligente
+                </h1>
+                <p class="hero-subtitle">
+                    Controle total sobre suas receitas, despesas e metas financeiras com uma interface moderna e intuitiva
+                </p>
+                <div class="hero-buttons">
+                    <a href="login.html" class="cta-primary">🚀 Começar Agora</a>
+                    <a href="cadastro.html" class="cta-secondary">📝 Criar Conta</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="img/financas-2.jpg" alt="Controle Financeiro" class="hero-img">
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Seção de Funcionalidades -->
+        <section id="features" class="features-section">
+            <div class="container">
+                <h2 class="section-title">✨ Funcionalidades Principais</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Dashboard Interativo</h3>
+                        <p>Visualize suas finanças em tempo real com gráficos e métricas personalizadas</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Metas Financeiras</h3>
+                        <p>Defina e acompanhe suas metas de economia com barras de progresso</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h3>Busca Inteligente</h3>
+                        <p>Encontre transações rapidamente com filtros avançados e sugestões</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3>100% Responsivo</h3>
+                        <p>Acesse de qualquer dispositivo com interface otimizada para mobile</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🎨</div>
+                        <h3>Temas Personalizáveis</h3>
+                        <p>Escolha entre tema claro e escuro para sua preferência visual</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">📤</div>
+                        <h3>Exportação de Dados</h3>
+                        <p>Baixe seus relatórios em CSV para análise externa</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção de Call to Action -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-content">
+                    <h2>Pronto para começar?</h2>
+                    <p>Junte-se a milhares de usuários que já controlam suas finanças com nossa aplicação</p>
+                    <div class="cta-buttons">
+                        <a href="cadastro.html" class="cta-primary">📝 Criar Conta Grátis</a>
+                        <a href="login.html" class="cta-secondary">🔐 Já tenho conta</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer id="contact" class="landing-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Controle Financeiro</h3>
+                    <p>Gerencie suas finanças de forma inteligente e eficiente</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="login.html">Login</a></li>
+                        <li><a href="cadastro.html">Cadastro</a></li>
+                        <li><a href="financas.html">Aplicação</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contato</h3>
+                    <p>📧 contato@financeiro.com</p>
+                    <p>📱 (11) 99999-9999</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="currentYear"></span> Controle Financeiro. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle de Tema
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const currentYear = document.getElementById('currentYear');
+            
+            // Definir ano atual
+            if (currentYear) {
+                currentYear.textContent = new Date().getFullYear();
+            }
+            
+            // Carregar tema salvo
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+            
+            // Event listener para toggle de tema
+            themeToggle.addEventListener('click', function() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+            });
+            
+            function updateThemeIcon(theme) {
+                themeToggle.innerHTML = theme === 'dark' ? '☀️' : '🌙';
+                themeToggle.title = theme === 'dark' ? 'Alternar para Tema Claro' : 'Alternar para Tema Escuro';
+            }
+
+            // Personaliza a página se o usuário estiver logado
+            const isAuthenticated = localStorage.getItem('authToken');
+            if (isAuthenticated) {
+                // Altera todos os links de login para "Acessar Painel"
+                document.querySelectorAll('a[href="login.html"]').forEach(link => {
+                    link.href = 'financas.html';
+                    // Altera o texto, preservando ícones se houver
+                    if (link.innerHTML.includes('🚀')) {
+                        link.innerHTML = '🚀 Acessar Painel';
+                    } else if (link.innerHTML.includes('🔐')) {
+                        link.innerHTML = '🚀 Acessar Painel';
+                    } else {
+                        link.textContent = 'Acessar Painel';
+                    }
+                });
+
+                // Oculta todos os links de cadastro
+                document.querySelectorAll('a[href="cadastro.html"]').forEach(link => {
+                    link.style.display = 'none';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

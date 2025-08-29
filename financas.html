@@ -5,30 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle Financeiro</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <!-- Toggle de Tema -->
+    <button class="theme-toggle" id="themeToggle" title="Alternar Tema">
+        🌙
+    </button>
+
     <header>
         <div class="header-content">
-            <h1>Controle Financeiro</h1>
+            <h1 class="modern-gradient">Controle Financeiro</h1>
             <p>Registro de entradas e saídas</p>
         </div>
     </header>
 
     <main>
+        <!-- FORMULÁRIO DE TRANSAÇÃO NO INÍCIO -->
         <section class="form-section">
-            <h2>Adicionar Transação</h2>
+            <h2>💰 Adicionar Transação</h2>
             <form id="transacaoForm">
                 <div class="form-grid">
                     <div class="form-group full-width">
                         <label for="descricao">Descrição:</label>
-                        <input type="text" id="descricao" name="descricao" required>
+                        <input type="text" id="descricao" name="descricao" required 
+                               placeholder="Ex: Salário, Conta de luz, Compras...">
                     </div>
 
                     <div class="form-group">
                         <label for="valor">Valor:</label>
                         <div class="input-currency">
                             <span class="currency-symbol">R$</span>
-                            <input type="number" id="valor" name="valor" step="0.01" required>
+                            <input type="number" id="valor" name="valor" step="0.01" required 
+                                   placeholder="0,00">
                         </div>
                     </div>
 
@@ -40,55 +49,161 @@
                     <div class="form-group">
                         <label for="banco">Banco:</label>
                         <select id="banco" name="banco" required>
+                            <option value="">Selecione...</option>
                             <option value="Itaú">Itaú</option>
                             <option value="Nubank">Nubank</option>
                             <option value="Santander">Santander</option>
                             <option value="Inter">Inter</option>
+                            <option value="Caixa">Caixa</option>
+                            <option value="Bradesco">Bradesco</option>
+                            <option value="BB">Banco do Brasil</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label for="categoria">Categoria:</label>
                         <select id="categoria" name="categoria" required>
-                            <option value="C.Créd. Itaú">C.Créd. Itaú</option>
-                            <option value="Cartão de Crédito Nu">Cartão de Crédito Nu</option>
-                            <option value="Cartão de Créd. Inter">Cartão de Créd. Inter</option>
-                            <option value="Transferência">Transferência</option>
-                            <option value="Transporte">Transporte</option>
-                            <option value="Casa">Casa</option>
-                            <option value="Fatura do Carro">Fatura do Carro</option>
-                            <option value="Lazer">Lazer</option>
+                            <option value="">Selecione...</option>
+                            <option value="Salário">Salário</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Investimentos">Investimentos</option>
                             <option value="Alimentação">Alimentação</option>
-                            <option value="Compras">Compras</option>
-                            <option value="Assinatura">Assinatura</option>
-                            <option value="Fatura do cartão">Fatura do cartão</option>
-                            <option value="Doação">Doação</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Moradia">Moradia</option>
+                            <option value="Lazer">Lazer</option>
+                            <option value="Saúde">Saúde</option>
                             <option value="Educação">Educação</option>
-                            <option value="FASTFOOD">FASTFOOD</option>
+                            <option value="Compras">Compras</option>
+                            <option value="Contas">Contas</option>
+                            <option value="Cartão de Crédito">Cartão de Crédito</option>
+                            <option value="Outros">Outros</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label for="tipo">Tipo:</label>
                         <select id="tipo" name="tipo" required>
-                            <option value="entrada">Entrada</option>
-                            <option value="saida">Saída</option>
+                            <option value="">Selecione...</option>
+                            <option value="entrada">💰 Entrada</option>
+                            <option value="saida">💸 Saída</option>
                         </select>
                     </div>
                 </div>
 
-                <button type="submit" class="submit-button">Adicionar Transação</button>
+                <button type="submit" class="submit-button">
+                    <span id="submitText">🚀 Adicionar Transação</span>
+                    <span id="submitLoading" class="loading" style="display: none;"></span>
+                </button>
             </form>
+        </section>
+
+        <!-- Dashboard Interativo -->
+        <section class="dashboard-section">
+            <h2>📊 Dashboard</h2>
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>Saldo Atual</h3>
+                    <div class="value" id="saldoAtual">R$ 0,00</div>
+                    <div class="change" id="saldoChange">+0% este mês</div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3>Receitas do Mês</h3>
+                    <div class="value" id="receitasMes">R$ 0,00</div>
+                    <div class="change" id="receitasChange">+0% vs mês anterior</div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3>Despesas do Mês</h3>
+                    <div class="value" id="despesasMes">R$ 0,00</div>
+                    <div class="change" id="despesasChange">+0% vs mês anterior</div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3>Meta de Economia</h3>
+                    <div class="value" id="metaEconomia">R$ 0,00</div>
+                    <div class="change" id="metaProgresso">0% atingido</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gráficos -->
+        <section class="charts-section">
+            <h2>📈 Análise Visual</h2>
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3 class="chart-title">Fluxo de Caixa Mensal</h3>
+                    <canvas id="fluxoCaixaChart"></canvas>
+                </div>
+                
+                <div class="chart-card">
+                    <h3 class="chart-title">Distribuição por Categoria</h3>
+                    <canvas id="categoriaChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Metas Financeiras -->
+        <section class="goals-section">
+            <h2>🎯 Metas Financeiras</h2>
+            <div id="goalsList" class="goals-container">
+                <!-- As metas serão renderizadas aqui pelo JavaScript -->
+            </div>
+
+            <!-- Formulário para adicionar nova meta (inicialmente oculto) -->
+            <div id="addGoalContainer" class="add-goal-form" style="display: none;">
+                <form id="addGoalForm">
+                    <h4>Adicionar Nova Meta</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="goalName">Nome da Meta</label>
+                            <input type="text" id="goalName" name="goalName" placeholder="Ex: Viagem para a praia" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="goalValue">Valor da Meta</label>
+                            <div class="input-currency">
+                                <span class="currency-symbol">R$</span>
+                                <input type="number" id="goalValue" name="goalValue" step="0.01" placeholder="1500,00" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="button-success">✅ Salvar Meta</button>
+                        <button type="button" id="cancelAddGoal" class="button-secondary">❌ Cancelar</button>
+                    </div>
+                </form>
+            </div>
+
+            <button id="btnShowAddGoal" class="submit-button">🎯 Adicionar Nova Meta</button>
+        </section>
+
+        <!-- Busca Inteligente -->
+        <section class="search-section">
+            <h2>🔍 Busca Inteligente</h2>
+            <div class="smart-search">
+                <input type="text" id="smartSearch" placeholder="Digite para buscar transações, categorias ou bancos...">
+                <div class="search-suggestions" id="searchSuggestions"></div>
+            </div>
         </section>
 
         <section class="transactions-section">
             <div class="section-header">
-                <h2>Transações Recentes</h2>
-                <button id="btnFiltros" class="filter-button">Filtros</button>
+                <h2>📋 Transações Recentes</h2>
+                <div class="button-group">
+                    <button id="btnFiltros" class="filter-button">🔍 Filtros</button>
+                    <button id="btnExportar" class="button-success">📤 Exportar Dados</button>
+                </div>
             </div>
 
-            <!-- Filtros -->
-            <div id="filtros" class="filters-container">
+            <!-- Filtros Avançados -->
+            <div id="filtros" class="advanced-filters" style="display: none;">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-tab="periodo">📅 Período</button>
+                    <button class="filter-tab" data-tab="categoria">🏷️ Categoria</button>
+                    <button class="filter-tab" data-tab="banco">🏦 Banco</button>
+                    <button class="filter-tab" data-tab="valor">💰 Valor</button>
+                </div>
+
                 <div class="filters-grid">
                     <div class="form-group">
                         <label for="filtroDataInicial">Data Inicial:</label>
@@ -106,47 +221,52 @@
                             <option value="Nubank">Nubank</option>
                             <option value="Santander">Santander</option>
                             <option value="Inter">Inter</option>
+                            <option value="Caixa">Caixa</option>
+                            <option value="Bradesco">Bradesco</option>
+                            <option value="BB">Banco do Brasil</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="filtroCategoria">Categoria:</label>
                         <select id="filtroCategoria">
                             <option value="">Todas</option>
-                            <option value="C.Créd. Itaú">C.Créd. Itaú</option>
-                            <option value="Cartão de Crédito Nu">Cartão de Crédito Nu</option>
-                            <option value="Cartão de Créd. Inter">Cartão de Créd. Inter</option>
-                            <option value="Transferência">Transferência</option>
-                            <option value="Transporte">Transporte</option>
-                            <option value="Casa">Casa</option>
-                            <option value="Fatura do Carro">Fatura do Carro</option>
-                            <option value="Lazer">Lazer</option>
+                            <option value="Salário">Salário</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Investimentos">Investimentos</option>
                             <option value="Alimentação">Alimentação</option>
-                            <option value="Compras">Compras</option>
-                            <option value="Assinatura">Assinatura</option>
-                            <option value="Fatura do cartão">Fatura do cartão</option>
-                            <option value="Doação">Doação</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Moradia">Moradia</option>
+                            <option value="Lazer">Lazer</option>
+                            <option value="Saúde">Saúde</option>
                             <option value="Educação">Educação</option>
-                            <option value="FASTFOOD">FASTFOOD</option>
+                            <option value="Compras">Compras</option>
+                            <option value="Contas">Contas</option>
+                            <option value="Cartão de Crédito">Cartão de Crédito</option>
+                            <option value="Outros">Outros</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="filtroTipo">Tipo:</label>
                         <select id="filtroTipo">
                             <option value="">Todos</option>
-                            <option value="entrada">Entrada</option>
-                            <option value="saida">Saída</option>
+                            <option value="entrada">💰 Entrada</option>
+                            <option value="saida">💸 Saída</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="filtroBusca">Buscar:</label>
-                        <input type="text" id="filtroBusca" placeholder="Buscar por descrição...">
+                        <label for="filtroValorMin">Valor Mínimo:</label>
+                        <input type="number" id="filtroValorMin" step="0.01" placeholder="R$ 0,00">
+                    </div>
+                    <div class="form-group">
+                        <label for="filtroValorMax">Valor Máximo:</label>
+                        <input type="number" id="filtroValorMax" step="0.01" placeholder="R$ 0,00">
                     </div>
                 </div>
 
                 <!-- Botões de Filtro -->
                 <div class="button-group">
-                    <button id="btnGerarFiltro" class="button-success">Gerar Filtro</button>
-                    <button id="btnLimparFiltro" class="button-secondary">Limpar Filtro</button>
+                    <button id="btnGerarFiltro" class="button-success">✅ Aplicar Filtros</button>
+                    <button id="btnLimparFiltro" class="button-secondary">🔄 Limpar Filtros</button>
                 </div>
             </div>
 
@@ -161,6 +281,7 @@
                             <th>Banco</th>
                             <th>Categoria</th>
                             <th>Tipo</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -171,19 +292,26 @@
 
         <!-- Extrato -->
         <section class="extrato-section">
-            <div class="extrato-container">
-                <h3>Extrato</h3>
-                <div class="extrato-content">
-                    <p><strong>Total:</strong> <span id="extratoTotal">R$ 0,00</span></p>
-                    <p><strong>Entradas:</strong> <span id="extratoEntradas">R$ 0,00</span></p>
-                    <p><strong>Saídas:</strong> <span id="extratoSaidas">R$ 0,00</span></p>
+            <h2>📊 Extrato do Período</h2>
+            <div class="extrato-grid">
+                <div class="extrato-card extrato-entradas">
+                    <h4>Total de Entradas</h4>
+                    <p id="extratoEntradas">R$ 0,00</p>
+                </div>
+                <div class="extrato-card extrato-saidas">
+                    <h4>Total de Saídas</h4>
+                    <p id="extratoSaidas">R$ 0,00</p>
+                </div>
+                <div class="extrato-card extrato-saldo" id="extratoSaldoCard">
+                    <h4>Saldo Final</h4>
+                    <p id="extratoTotal">R$ 0,00</p>
                 </div>
             </div>
         </section>
 
         <!-- Botão de Sair -->
         <div class="logout-container">
-            <button id="logoutButton" class="logout-button">Sair</button>
+            <button id="logoutButton" class="button-secondary logout-button">🚪 Sair</button>
         </div>
     </main>
 
