@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 let transactions = [];
 let goals = [];
+let fluxoCaixaChartInstance = null;
+let categoriaChartInstance = null;
 let currentTheme = localStorage.getItem('theme') || 'light';
 
 // ===== INICIALIZAÇÃO DA APLICAÇÃO =====
@@ -32,13 +34,14 @@ async function initializeApp() {
 
 // ===== VERIFICAÇÃO DE AUTENTICAÇÃO =====
 function checkAuth() {
-    const isAuthenticated = localStorage.getItem('isAuthenticated');
-    // Se não estiver autenticado, redireciona para a página de login
-    if (isAuthenticated !== 'true') {
+    const token = localStorage.getItem('authToken');
+    // Se não houver token, redireciona para a página de login
+    if (!token) {
         alert('Acesso negado. Por favor, faça o login.');
         window.location.href = 'login.html';
+        return null; // Interrompe a execução se não houver token
     }
-    return isAuthenticated;
+    return token; // Retorna o token para ser usado nas chamadas da API
 }
 
 // ===== CARREGAMENTO DE DADOS INICIAIS =====
@@ -293,6 +296,10 @@ function setupCharts() {
 }
 
 function setupFluxoCaixaChart() {
+    if (fluxoCaixaChartInstance) {
+        fluxoCaixaChartInstance.destroy();
+    }
+
     const ctx = document.getElementById('fluxoCaixaChart').getContext('2d');
     
     // Dados dos últimos 6 meses
@@ -318,7 +325,7 @@ function setupFluxoCaixaChart() {
         saidas.push(saidasMes);
     }
     
-    new Chart(ctx, {
+    fluxoCaixaChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
             labels: meses,
@@ -358,6 +365,10 @@ function setupFluxoCaixaChart() {
 }
 
 function setupCategoriaChart() {
+    if (categoriaChartInstance) {
+        categoriaChartInstance.destroy();
+    }
+
     const ctx = document.getElementById('categoriaChart').getContext('2d');
     
     // Agrupar transações por categoria
@@ -371,7 +382,7 @@ function setupCategoriaChart() {
     const labels = Object.keys(categorias);
     const data = Object.values(categorias);
     
-    new Chart(ctx, {
+    categoriaChartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: labels,
@@ -538,61 +549,66 @@ function setupFilterTabs() {
 // ===== FORMULÁRIO DE TRANSAÇÃO =====
 async function handleSubmit(e) {
     e.preventDefault();
-    
-    // Mostrar loading
-    const submitText = document.getElementById('submitText');
-    const submitLoading = document.getElementById('submitLoading');
-    submitText.parentElement.disabled = true;
+
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    const submitText = submitButton.querySelector('#submitText');
+    const submitLoading = submitButton.querySelector('#submitLoading');
+    submitButton.disabled = true;
+    submitText.style.display = 'none';
     submitLoading.style.display = 'inline-block';
-    
-    // Simular delay para melhor UX
-    setTimeout(() => {
-        const formData = new FormData(e.target);
-        
-        const transaction = {
-            id: Date.now().toString(),
-            description: formData.get('descricao'),
-            amount: parseFloat(formData.get('valor')),
-            date: formData.get('data'),
-            bank: formData.get('banco'),
-            category: formData.get('categoria'),
-            type: formData.get('tipo'),
-            created_at: new Date().toISOString()
-        };
-        
-        // Enviar para o backend
-        const token = localStorage.getItem('authToken');
-        fetch(`${API_URL}/transactions`, {
-            method: 'POST',
+
+    const formData = new FormData(e.target);
+    const transactionId = formData.get('transactionId');
+
+    const transactionData = {
+        description: formData.get('descricao'),
+        amount: parseFloat(formData.get('valor')),
+        date: formData.get('data'),
+        bank: formData.get('banco'),
+        category: formData.get('categoria'),
+        type: formData.get('tipo'),
+    };
+
+    const isEditing = !!transactionId;
+    const url = isEditing ? `${API_URL}/transactions/${transactionId}` : `${API_URL}/transactions`;
+    const method = isEditing ? 'PUT' : 'POST';
+    const token = localStorage.getItem('authToken');
+
+    try {
+        const response = await fetch(url, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify(transaction)
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('Falha ao salvar transação.');
-            return response.json();
-        })
-        .then(newTransactionData => {
-            transaction.id = newTransactionData.id; // Atualiza o ID com o do banco
-            transactions.push(transaction);
-            
-            e.target.reset();
-            document.getElementById('data').value = new Date().toISOString().split('T')[0];
-            
-            atualizarDashboard();
-            atualizarTabela();
-            setupCharts();
-            
-            showNotification('Transação adicionada com sucesso!', 'success');
-        })
-        .catch(error => showNotification(error.message, 'error'))
-        .finally(() => {
-            submitText.parentElement.disabled = false;
-            submitLoading.style.display = 'none';
+            body: JSON.stringify(transactionData)
         });
-    }, 500);
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || (isEditing ? 'Falha ao atualizar transação.' : 'Falha ao salvar transação.'));
+        }
+
+        showNotification(data.message, 'success');
+
+        e.target.reset();
+        document.getElementById('data').value = new Date().toISOString().split('T')[0];
+        document.getElementById('transactionId').value = '';
+        submitText.textContent = '🚀 Adicionar Transação';
+
+        await loadInitialData(token);
+        
+        atualizarDashboard();
+        atualizarTabela();
+        setupCharts();
+
+    } catch (error) {
+        showNotification(error.message, 'error');
+    } finally {
+        submitButton.disabled = false;
+        submitText.style.display = 'inline-block';
+        submitLoading.style.display = 'none';
+    }
 }
 
 // ===== TABELA DE TRANSAÇÕES =====
@@ -630,23 +646,19 @@ async function handleSubmit(e) {
  }
 
 function editarTransacao(id) {
-    const transaction = transactions.find(t => t.id === id);
+    const transaction = transactions.find(t => t.id.toString() === id.toString());
     if (transaction) {
         // Preencher formulário com dados da transação
+        document.getElementById('transactionId').value = transaction.id;
         document.getElementById('descricao').value = transaction.description;
         document.getElementById('valor').value = transaction.amount;
-        document.getElementById('data').value = transaction.date;
+        document.getElementById('data').value = new Date(transaction.date).toISOString().split('T')[0];
         document.getElementById('banco').value = transaction.bank;
         document.getElementById('categoria').value = transaction.category;
         document.getElementById('tipo').value = transaction.type;
         
-        // Remover transação antiga
-        transactions = transactions.filter(t => t.id !== id);
-        localStorage.setItem('transactions', JSON.stringify(transactions));
-        
-        // Atualizar interface
-        atualizarDashboard();
-        atualizarTabela();
+        // Mudar texto do botão para indicar edição
+        document.getElementById('submitText').textContent = '💾 Salvar Alterações';
         
         showNotification('Transação carregada para edição!', 'info');
         
@@ -655,16 +667,31 @@ function editarTransacao(id) {
     }
 }
 
-function excluirTransacao(id) {
+async function excluirTransacao(id) {
     if (confirm('Tem certeza que deseja excluir esta transação?')) {
-        transactions = transactions.filter(t => t.id !== id);
-        localStorage.setItem('transactions', JSON.stringify(transactions));
-        
-        atualizarDashboard();
-        atualizarTabela();
-        setupCharts();
-        
-        showNotification('Transação excluída com sucesso!', 'success');
+        const token = localStorage.getItem('authToken');
+        try {
+            const response = await fetch(`${API_URL}/transactions/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Falha ao excluir a transação.');
+            }
+
+            // Remove do array local e atualiza a UI
+            transactions = transactions.filter(t => t.id.toString() !== id);
+            atualizarDashboard();
+            atualizarTabela();
+            setupCharts();
+            showNotification('Transação excluída com sucesso!', 'success');
+        } catch (error) {
+            console.error('Erro ao excluir transação:', error);
+            showNotification(error.message, 'error');
+        }
     }
 }
 

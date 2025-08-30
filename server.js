@@ -1,23 +1,15 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const db = require('./config/db'); // Importar o pool de conexões
 
 const app = express();
 
 // --- Middlewares ---
 app.use(cors());
 app.use(express.json());
-
-// --- Configuração do Banco de Dados ---
-const dbConfig = {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-};
 
 // --- Middleware de Autenticação ---
 const authenticateToken = (req, res, next) => {
@@ -44,12 +36,10 @@ app.post('/api/auth/register', async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const connection = await mysql.createConnection(dbConfig);
-        const [result] = await connection.execute(
+        const [result] = await db.execute(
             'INSERT INTO users (nomeCompleto, email, username, password) VALUES (?, ?, ?, ?)',
             [nomeCompleto, email, username, hashedPassword]
         );
-        await connection.end();
 
         res.status(201).json({ message: 'Usuário criado com sucesso!', userId: result.insertId });
     } catch (error) {
@@ -67,9 +57,7 @@ app.post('/api/auth/login', async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        const connection = await mysql.createConnection(dbConfig);
-        const [rows] = await connection.execute('SELECT * FROM users WHERE username = ?', [username]);
-        await connection.end();
+        const [rows] = await db.execute('SELECT * FROM users WHERE username = ?', [username]);
 
         if (rows.length === 0) {
             return res.status(401).json({ message: 'Usuário ou senha inválidos.' });
@@ -100,9 +88,7 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/transactions', authenticateToken, async (req, res) => {
     try {
         const userId = req.user.id;
-        const connection = await mysql.createConnection(dbConfig);
-        const [transactions] = await connection.execute('SELECT * FROM transactions WHERE user_id = ? ORDER BY date DESC', [userId]);
-        await connection.end();
+        const [transactions] = await db.execute('SELECT * FROM transactions WHERE user_id = ? ORDER BY date DESC', [userId]);
         res.json(transactions);
     } catch (error) {
         console.error('Erro ao buscar transações:', error);
@@ -116,12 +102,10 @@ app.post('/api/transactions', authenticateToken, async (req, res) => {
         const userId = req.user.id;
         const { description, amount, date, bank, category, type } = req.body;
 
-        const connection = await mysql.createConnection(dbConfig);
-        const [result] = await connection.execute(
+        const [result] = await db.execute(
             'INSERT INTO transactions (user_id, description, amount, date, bank, category, type) VALUES (?, ?, ?, ?, ?, ?, ?)',
             [userId, description, amount, date, bank, category, type]
         );
-        await connection.end();
 
         res.status(201).json({ message: 'Transação adicionada com sucesso!', id: result.insertId });
     } catch (error) {
@@ -130,7 +114,54 @@ app.post('/api/transactions', authenticateToken, async (req, res) => {
     }
 });
 
-// Adicione aqui outras rotas (DELETE, UPDATE, Goals, etc.) seguindo o mesmo padrão.
+// Excluir uma transação
+app.delete('/api/transactions/:id', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const transactionId = req.params.id;
+
+        const [result] = await db.execute(
+            'DELETE FROM transactions WHERE id = ? AND user_id = ?',
+            [transactionId, userId]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Transação não encontrada ou não pertence ao usuário.' });
+        }
+
+        res.status(200).json({ message: 'Transação excluída com sucesso!' });
+    } catch (error) {
+        console.error('Erro ao excluir transação:', error);
+        res.status(500).json({ message: 'Erro ao excluir transação.' });
+    }
+});
+
+// Atualizar uma transação existente
+app.put('/api/transactions/:id', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const transactionId = req.params.id;
+        const { description, amount, date, bank, category, type } = req.body;
+
+        if (!description || !amount || !date || !bank || !category || !type) {
+            return res.status(400).json({ message: 'Todos os campos são obrigatórios.' });
+        }
+
+        const [result] = await db.execute(
+            'UPDATE transactions SET description = ?, amount = ?, date = ?, bank = ?, category = ?, type = ? WHERE id = ? AND user_id = ?',
+            [description, amount, date, bank, category, type, transactionId, userId]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Transação não encontrada ou não pertence ao usuário.' });
+        }
+
+        res.status(200).json({ message: 'Transação atualizada com sucesso!' });
+    } catch (error) {
+        console.error('Erro ao atualizar transação:', error);
+        res.status(500).json({ message: 'Erro ao atualizar transação.' });
+    }
+});
 
 // --- Iniciar o Servidor ---
 const PORT = process.env.PORT || 3000;

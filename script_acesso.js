@@ -25,7 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     showSuccessMessage(data.username);
                     setTimeout(() => { window.location.href = 'financas.html'; }, 2000);
                 } else {
-                    showErrorMessage();
+                    // Pega a mensagem de erro específica do backend
+                    const errorData = await response.json();
+                    showErrorMessage(errorData.message || 'Ocorreu um erro inesperado.');
                 }
             } catch (error) {
                 console.error('Erro de rede:', error);
